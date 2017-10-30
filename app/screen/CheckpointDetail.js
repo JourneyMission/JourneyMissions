@@ -8,16 +8,64 @@ import {
   TouchableOpacity,
   Image,
   Text,
-  ScrollView
+  ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import Scorebar from '../component/main/Scorebar';
 import Detail from '../component/checkpoints/Detail';
 
 const { width, height } = Dimensions.get('window');
 export default class CheckpointDetail extends Component {
+    constructor(props) {
+        super(props);
+        const { state } = this.props.navigation; 
+        this.state = {
+          isLoading: true,
+          id: state.params.id,
+          fbId: state.params.fbId,
+          team: state.params.team,
+          apiURL: state.params.apiURL,
+        };
+    }
+
+    componentDidMount() {
+        let URL = this.state.apiURL + '/Missions';
+        return fetch(URL, {
+            method: 'GET',
+            headers: { Accept: 'application/json' }
+             }).then((response) => response.json())
+          .then((responseJson) => {
+            let missions = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+            this.setState({
+              isLoading: false,
+              dataSource: missions.cloneWithRows(responseJson.data),
+            });
+            console.log(this.state.dataSource);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+          
+      }
     
+      sendVar() {
+        const { state } = this.props.navigation; 
+        const variable = {
+            id: state.params.id,
+            fbId: state.params.fbId,
+            team: state.params.team,
+            apiURL: state.params.apiURL,
+        };
+        return variable;
+    }
     render() {
-        return (
+        const { navigate } = this.props.navigation;
+        if (this.state.isLoading) {
+            return (
+                < ActivityIndicator />
+            );
+        } else {
+            return (
             <View style={styles.container}>
                 <View style={styles.nav}>
                     <View>
@@ -73,6 +121,7 @@ export default class CheckpointDetail extends Component {
                 </View>
             </View>
         );
+    }
       }
       
     }

@@ -25,33 +25,20 @@ export default class SearchMission extends Component {
           source: 1,
           destination: 1,
           startSearch: false,
-          url: 'http://www.journeymission.me/api/Missions',
-          team: state.params.team,
           id: state.params.id,
+          fbId: state.params.fbId,
+          team: state.params.team,
+          apiURL: state.params.apiURL,
         };
     }
     
     componentDidMount() {
-        return fetch(this.state.url, {
-            method: 'GET',
-            headers: {'Accept': 'application/json'}
-             }).then((response) => response.json())
-          .then((responseJson) => {
-            let missions = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-            this.setState({
-              isLoading: false,
-              dataSource: missions.cloneWithRows(responseJson.data),
-            });
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+        let URL = this.state.apiURL + '/Missions';
+        return this.fetchData(URL);
       }
     
-    search() {
-        let url = 'http://www.journeymission.me/api/Missions?search=Mission_Source:' + this.state.source + ';Mission_Destination:' + this.state.destination;
-        console.log('url ', url);
-        return fetch(url, {
+    fetchData(URL){
+        return fetch( URL, {
             method: 'GET',
             headers: {'Accept': 'application/json'}
              }).then((response) => response.json())
@@ -65,15 +52,35 @@ export default class SearchMission extends Component {
           .catch((error) => {
             console.error(error);
           });
+    }
+    
+    sendVar() {
+        const { state } = this.props.navigation; 
+        const variable = {
+            id: state.params.id,
+            fbId: state.params.fbId,
+            team: state.params.team,
+            apiURL: state.params.apiURL,
+        };
+        return variable;
+    }
+    search() {
+        let URL = this.state.apiURL + '/Missions?search=Mission_Source:' + this.state.source + ';Mission_Destination:' + this.state.destination;
+        return this.fetchData(URL);
       }
-
+    sendVartoCheckpoint(Mission_ID) {
+        const { state } = this.props.navigation; 
+        const variable = this.sendVar();
+        variable['Mission_ID'] = Mission_ID;
+        return variable;
+    }
     render() {
         const { navigate } = this.props.navigation;
         if (this.state.isLoading) {
             return (
                 <View style={styles.container}>
                 <View style={styles.nav}>
-                <TouchableOpacity onPress={() => navigate('RecommendMission', { team: this.state.team, id: this.state.id })}>
+                <TouchableOpacity onPress={() => navigate('RecommendMission', this.sendVar())}>
                         <Image style={styles.navBack} source={require('../img/rc_btt_back.png')} />
                     </TouchableOpacity>
                     <Text style={styles.navText}> Search Mission </Text>
@@ -250,11 +257,11 @@ export default class SearchMission extends Component {
             </View>
             );
           }
-
+          
         return (
             <View style={styles.container}>
                 <View style={styles.nav}>
-                    <TouchableOpacity onPress={() => navigate('RecommendMission', { team: this.state.team, id: this.state.id })}>
+                    <TouchableOpacity onPress={() => navigate('RecommendMission', this.sendVar())}>
                         <Image style={styles.navBack} source={require('../img/rc_btt_back.png')} />
                     </TouchableOpacity>
                     <Text style={styles.navText}> Search Mission </Text>
@@ -429,15 +436,16 @@ export default class SearchMission extends Component {
                 </TouchableOpacity>
 
                 
-                <ListView 
+               <ListView
                 style={styles.mission}
                 dataSource={this.state.dataSource}
-                renderRow={(rowData) => 
-                <TouchableOpacity onPress={() => navigate('MissionDetail', { 'Mission_ID': rowData.id })}>
-                    <Mission Mission_Name={rowData.Mission_Name} Mission_Description={rowData.Mission_Description} Mission_Icon={rowData.Mission_Icon} />
-                </TouchableOpacity>
-                    }
-            />
+                renderRow={(rowData) => <TouchableOpacity
+                onPress={() => navigate('MissionDetail', this.sendVartoCheckpoint(rowData.id))} >
+                <Mission
+                    Mission_Name={rowData.Mission_Name}
+                    Mission_Description={rowData.Mission_Description}
+                    Mission_Icon={rowData.Mission_Icon} />
+            </TouchableOpacity>} />
                   </View>
                 </ScrollView>
             </View>

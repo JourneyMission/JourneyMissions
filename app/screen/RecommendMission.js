@@ -20,14 +20,16 @@ export default class RecommendMission extends Component {
         const { state } = this.props.navigation; 
         this.state = {
           isLoading: true,
-          team: state.params.team,
           id: state.params.id,
+          fbId: state.params.fbId,
+          team: state.params.team,
+          apiURL: state.params.apiURL,
         };
-        console.log('user: ' + this.state.id + 'team: ' + this.state.team);
     }
 
     componentDidMount() {
-        return fetch('http://www.journeymission.me/api/Missions', {
+        let URL = this.state.apiURL + '/Missions';
+        return fetch(URL, {
             method: 'GET',
             headers: { Accept: 'application/json' }
              }).then((response) => response.json())
@@ -37,54 +39,62 @@ export default class RecommendMission extends Component {
               isLoading: false,
               dataSource: missions.cloneWithRows(responseJson.data),
             });
+            console.log(this.state.dataSource);
           })
           .catch((error) => {
             console.error(error);
           });
+          
       }
+    
+      sendVar() {
+        const { state } = this.props.navigation; 
+        const variable = {
+            id: state.params.id,
+            fbId: state.params.fbId,
+            team: state.params.team,
+            apiURL: state.params.apiURL,
+        };
+        return variable;
+    }
+    sendVartoCheckpoint(Mission_ID) {
+        const { state } = this.props.navigation; 
+        const variable = this.sendVar();
+        variable['Mission_ID'] = Mission_ID;
+        return variable;
+    }
 
     render() {
         const { navigate } = this.props.navigation;
         if (this.state.isLoading) {
             return (
-                <View style={styles.container}>
-                <View style={styles.nav}>
-                    <TouchableOpacity onPress={() => navigate('Home', { team: this.state.team, id: this.state.id })}>
-                        <Image style={styles.navBack} source={require('../img/rc_btt_back.png')} />
-                    </TouchableOpacity>
-                    <Text style={styles.navText}> Recommend {'\n'} Mission </Text>
-                    <TouchableOpacity onPress={() => navigate('SearchMission', { team: this.state.team, id: this.state.id })}>
-                        <Image style={styles.navSearch} source={require('../img/rc_btt_search.png')} />
-                    </TouchableOpacity>
-                </View>
-                <Image style={styles.bg} source={require('../img/rc_bg_prop.png')} />
                < ActivityIndicator />
-            </View>
             );
           }
 
         return (
             <View style={styles.container}>
                 <View style={styles.nav}>
-                    <TouchableOpacity onPress={() => navigate('Home', { team: this.state.team, id: this.state.id })}>
+                    <TouchableOpacity onPress={() => navigate('Home', this.state)}>
                         <Image style={styles.navBack} source={require('../img/rc_btt_back.png')} />
                     </TouchableOpacity>
                     <Text style={styles.navText}> Recommend {'\n'} Mission </Text>
-                    <TouchableOpacity onPress={() => navigate('SearchMission', { team: this.state.team, id: this.state.id })}>
+                    <TouchableOpacity onPress={() => navigate('SearchMission', this.state)}>
                         <Image style={styles.navSearch} source={require('../img/rc_btt_search.png')} />
                     </TouchableOpacity>
                 </View>
                 <Image style={styles.bg} source={require('../img/rc_bg_prop.png')} />
                 
-                <ListView 
+                <ListView
                     style={styles.mission}
                     dataSource={this.state.dataSource}
-                    renderRow={(rowData) => 
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('MissionDetail', { Mission_ID: rowData.id })}>
-                        <Mission Mission_Name={rowData.Mission_Name} Mission_Description={rowData.Mission_Description} Mission_Icon={rowData.Mission_Icon} />
-                    </TouchableOpacity>
-                        }
-                />
+                    renderRow={(rowData) => <TouchableOpacity
+                    onPress={() => navigate('MissionDetail', this.sendVartoCheckpoint(rowData.id))} >
+                    <Mission
+                        Mission_Name={rowData.Mission_Name}
+                        Mission_Description={rowData.Mission_Description}
+                        Mission_Icon={rowData.Mission_Icon} />
+                </TouchableOpacity>} />
             </View>
         );
       }

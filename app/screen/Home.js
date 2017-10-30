@@ -8,18 +8,18 @@ import {
   Dimensions,
   TouchableOpacity
 } from 'react-native';
-
+import TeamWithProfile from '../component/team/TeamWithProfile';
 
 const { width, height } = Dimensions.get('window');
 export default class Home extends Component {
     constructor(props) {
         super(props);
         const { state } = this.props.navigation; 
-        
-        const team = state.params.team;
         this.state = {
-          cover: state.params.team,
-          id: 1
+          id: 1,
+          fbId: '100000271633032',
+          team: state.params.team,
+          apiURL: 'http://10.0.2.2/api',
         };
     }
 
@@ -30,14 +30,12 @@ export default class Home extends Component {
             <View style={styles.nav}>
             <Image style={styles.navSearch} source={require('../img/rc_btt_search.png')} />
             </View>
-                <Image style={styles.teammask} source={require('../img/mm_team_fox.png')} >
-                    <Image style={styles.avatar} source={{ uri: 'https://graph.facebook.com/100000271633032/picture?type=large' }} />
-                </Image>
+                <TeamWithProfile team={this.state.team} fbId={this.state.fbId} />
                 <Text style={styles.name}>Songrit Keardphol</Text>
-                <TouchableOpacity onPress={() => navigate('CurrentMission', { team: this.state.team, id: this.state.id })}>
+                <TouchableOpacity onPress={() => navigate('CurrentMission', this.state)}>
                     <Image style={styles.btn} source={require('../img/bt_continue.png')} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigate('RecommendMission', { team: this.state.team, id: this.state.id })}>
+                <TouchableOpacity onPress={() => navigate('RecommendMission', this.state)}>
                     <Image style={styles.btn} source={require('../img/bt_start.png')} />
                 </TouchableOpacity>
                 <Image style={styles.bg} source={require('../img/mm_bg_prop.png')} />
@@ -46,7 +44,6 @@ export default class Home extends Component {
   }
 }
 const styles = StyleSheet.create({
-    
     container: {
       flex: 1,
       backgroundColor: '#FBD54A',
@@ -83,21 +80,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         zIndex: -100,
         bottom: 0,
-    },
-    avatar: {
-        width: width * 0.5,
-        height: width * 0.5,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: width * 0.5,
-        zIndex: -100,
-    },
-    teammask: {
-        width: width * 0.5,
-        height: width * 0.5,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 10,
     },
     btn: {
         width: width * 0.7,
