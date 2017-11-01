@@ -1,4 +1,4 @@
-import { StackNavigator } from 'react-navigation';
+import {StackNavigator} from 'react-navigation';
 import CurrentMission from '../screen/CurrentMission';
 import RecommendMission from '../screen/RecommendMission';
 import SearchMission from '../screen/SearchMission';
@@ -13,40 +13,38 @@ import G from '../screen/G';
 
 const Router = StackNavigator({
 
+  Login: {
+    screen: Login
+  },
+  SearchMission: {
+    screen: SearchMission
+  },
+  RecommendMission: {
+    screen: RecommendMission
+  },
+  CurrentMission: {
+    screen: CurrentMission
+  },
   MissionDetail: {
-    screen: MissionDetail,
+    screen: MissionDetail
   },
   CheckpointDetail: {
-    screen: CheckpointDetail,
+    screen: CheckpointDetail
   },
   CheckpointLocation: {
-      screen: CheckpointLocation,
-    },
-    CheckpointReview: {
-      screen: CheckpointReview,
-    },
-    Login: {
-      screen: Login
-    },
-    SearchMission: {
-      screen: SearchMission,
-    },
-    RecommendMission: {
-      screen: RecommendMission,
-    },
-    CurrentMission: {
-      screen: CurrentMission
-    },
-
-    SelectTeam: {
-        screen: SelectTeam
-    },
-    Home: {
-        screen: Home
-    },
-    
+    screen: CheckpointLocation
+  },
+  CheckpointReview: {
+    screen: CheckpointReview
+  },
+  SelectTeam: {
+    screen: SelectTeam
+  },
+  Home: {
+    screen: Home
+  }
 }, {
-   headerMode: 'none',
-   mode: 'modal', 
+  headerMode: 'none',
+  mode: 'modal'
 });
 export default Router;

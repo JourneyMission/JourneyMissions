@@ -19,17 +19,18 @@ export default class CheckpointLocation extends Component {
         const {state} = this.props.navigation;
         this.state = {
             isLoading: true,
-            id: 1,
-            fbId: '100000271633032',
-            team: 'bear',
-            apiURL: 'http://10.0.2.2/api',
+            id: state.params.id,
+            fbId: state.params.fbId,
+            team: state.params.team,
+            apiURL: state.params.apiURL,
+            Mission_ID: state.params.Mission_ID,
             imgURL: 'http://journeymission.me/storage',
-            Checkpoint_ID: 9,
-            Mission_ID: 1,
+            Checkpoint_ID: state.params.Checkpoint_ID,
             currentMap: {
                 latitude: 0,
                 longitude: 0,
-            }
+            },
+            back: state.params.back
           };
           
     }
@@ -98,7 +99,8 @@ export default class CheckpointLocation extends Component {
             fbId: state.params.fbId,
             team: state.params.team,
             apiURL: state.params.apiURL,
-            Mission_ID: state.params.Mission_ID
+            Mission_ID: state.params.Mission_ID,
+            back: this.state.back
         };
         return variable;
     }
@@ -108,6 +110,7 @@ export default class CheckpointLocation extends Component {
         const variable = this.sendVar();
         variable['Mission_ID'] = state.params.Mission_ID;
         variable['Checkpoint_ID'] = Checkpoint_ID;
+        variable['back'] = this.state.back;
         return variable;
     }
 

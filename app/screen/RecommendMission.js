@@ -39,7 +39,6 @@ export default class RecommendMission extends Component {
               isLoading: false,
               dataSource: missions.cloneWithRows(responseJson.data),
             });
-            console.log(this.state.dataSource);
           })
           .catch((error) => {
             console.error(error);
@@ -60,7 +59,8 @@ export default class RecommendMission extends Component {
     sendVartoCheckpoint(Mission_ID) {
         const { state } = this.props.navigation; 
         const variable = this.sendVar();
-        variable['Mission_ID'] = Mission_ID;
+        variable['Mission_ID'] = Mission_ID;    
+        variable['back'] = 'RecommendMission';
         return variable;
     }
 

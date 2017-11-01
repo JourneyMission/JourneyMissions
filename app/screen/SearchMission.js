@@ -71,7 +71,8 @@ export default class SearchMission extends Component {
     sendVartoCheckpoint(Mission_ID) {
         const { state } = this.props.navigation; 
         const variable = this.sendVar();
-        variable['Mission_ID'] = Mission_ID;
+        variable['Mission_ID'] = Mission_ID
+        variable['back'] = 'SearchMission';
         return variable;
     }
     render() {

@@ -21,13 +21,17 @@ export default class CheckpointReview extends Component {
         super(props);
         const { state } = this.props.navigation; 
         this.state = {
-          isLoading: true,
-          id: 1,
-          fbId: '100000271633032',
-          team: 'bear',
-          apiURL: 'http://10.0.2.2/api',
-          imgURL: 'http://journeymission.me/storage',
-          Checkpoint_ID: 9,
+            isLoading: true,
+            id: state.params.id,
+            fbId: state.params.fbId,
+            team: state.params.team,
+            apiURL: state.params.apiURL,
+            Mission_ID: state.params.Mission_ID,
+            imgURL: 'http://journeymission.me/storage',
+            Checkpoint_ID: state.params.Checkpoint_ID,
+            Checkin: false,
+            modalVisible: false,
+            back: state.params.back
         };
     }
 
@@ -66,22 +70,24 @@ export default class CheckpointReview extends Component {
       }
     
       sendVar() {
-        const { state } = this.props.navigation;
+        const {state} = this.props.navigation;
         const variable = {
             id: state.params.id,
             fbId: state.params.fbId,
             team: state.params.team,
             apiURL: state.params.apiURL,
-            Mission_ID: state.params.Mission_ID
+            Mission_ID: state.params.Mission_ID,
+            back: this.state.back
         };
         return variable;
     }
 
     sendVartoCheckpoint(Checkpoint_ID) {
-        const { state } = this.props.navigation; 
+        const {state} = this.props.navigation;
         const variable = this.sendVar();
-        variable['Mission_ID'] = this.state.Mission_ID;
+        variable['Mission_ID'] = state.params.Mission_ID;
         variable['Checkpoint_ID'] = Checkpoint_ID;
+        variable['back'] = this.state.back;
         return variable;
     }
 

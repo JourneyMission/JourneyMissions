@@ -16,19 +16,21 @@ export default class Home extends Component {
         super(props);
         const { state } = this.props.navigation; 
         this.state = {
-          id: 1,
-          fbId: '100000271633032',
-          team: state.params.team,
-          apiURL: 'http://10.0.2.2/api',
+            id: state.params.id,
+            fbId: state.params.fbId,
+            team: state.params.team,
+            apiURL: state.params.apiURL,
         };
     }
+    componentDidmount(){
 
+    }
   render() {
     const { navigate } = this.props.navigation;
     return (
         <View style={styles.container}>
             <View style={styles.nav}>
-            <Image style={styles.navSearch} source={require('../img/rc_btt_search.png')} />
+                <View/>
             </View>
                 <TeamWithProfile team={this.state.team} fbId={this.state.fbId} />
                 <Text style={styles.name}>Songrit Keardphol</Text>

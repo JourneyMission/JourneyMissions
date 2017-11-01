@@ -63,6 +63,7 @@ export default class CurrentMission extends Component {
         const { state } = this.props.navigation; 
         const variable = this.sendVar();
         variable['Mission_ID'] = Mission_ID;
+        variable['back'] = 'CurrentMission';
         return variable;
     }
 

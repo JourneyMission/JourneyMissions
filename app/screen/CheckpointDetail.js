@@ -23,15 +23,16 @@ export default class CheckpointDetail extends Component {
         const {state} = this.props.navigation;
         this.state = {
             isLoading: true,
-            id: 1,
-            fbId: '100000271633032',
-            team: 'bear',
-            apiURL: 'http://10.0.2.2/api',
+            id: state.params.id,
+            fbId: state.params.fbId,
+            team: state.params.team,
+            apiURL: state.params.apiURL,
+            Mission_ID: state.params.Mission_ID,
             imgURL: 'http://journeymission.me/storage',
-            Checkpoint_ID: 9,
-            Mission_ID: 1,
+            Checkpoint_ID: state.params.Checkpoint_ID,
             Checkin: false,
-            modalVisible: false
+            modalVisible: false,
+            back: state.params.back
         };
     }
 
@@ -52,7 +53,7 @@ export default class CheckpointDetail extends Component {
                     Accept: 'application/json'
                 }
             }).then((response) => response.json()).then((responseJson) => {
-                this.setState({isLoading: false, checkpointPhoto: responseJson.data[0].Checkpoint_Photo});
+                this.setState({ checkpointPhoto: responseJson.data[0].Checkpoint_Photo});
                 this.setState({
                     checkpoint_Photo: this.state.imgURL + '/checkpoint/' + this.state.checkpointPhoto
                 });
@@ -63,9 +64,9 @@ export default class CheckpointDetail extends Component {
                     }
                 }).then((response) => response.json()).then((responseJson) => {
                     if (responseJson.data.length !== 0) {
-                        this.setState({Checkin: false});
+                        this.setState({Checkin: false, isLoading: false});
                     } else {
-                        this.setState({Checkin: true});
+                        this.setState({Checkin: true, isLoading: false});
                     }
                 }).catch((error) => {
                     console.error(error);
@@ -79,6 +80,10 @@ export default class CheckpointDetail extends Component {
 
     }
 
+    setModalVisible(visible) {
+        this.setState({modalVisible: visible});
+    }
+    
     sendVar() {
         const {state} = this.props.navigation;
         const variable = {
@@ -86,7 +91,8 @@ export default class CheckpointDetail extends Component {
             fbId: state.params.fbId,
             team: state.params.team,
             apiURL: state.params.apiURL,
-            Mission_ID: state.params.Mission_ID
+            Mission_ID: state.params.Mission_ID,
+            back: this.state.back
         };
         return variable;
     }
@@ -96,6 +102,7 @@ export default class CheckpointDetail extends Component {
         const variable = this.sendVar();
         variable['Mission_ID'] = state.params.Mission_ID;
         variable['Checkpoint_ID'] = Checkpoint_ID;
+        variable['back'] = this.state.back;
         return variable;
     }
 
@@ -134,10 +141,6 @@ export default class CheckpointDetail extends Component {
             );
         }
 
-    }
-
-    setModalVisible(visible) {
-        this.setState({modalVisible: visible});
     }
 
     render() {
