@@ -7,10 +7,25 @@ import Home from '../screen/Home';
 import Login from '../screen/Login';
 import SelectTeam from '../screen/SelectTeam';
 import CheckpointDetail from '../screen/CheckpointDetail';
+import CheckpointLocation from '../screen/CheckpointLocation';
+import CheckpointReview from '../screen/CheckpointReview';
+import G from '../screen/G';
 
 const Router = StackNavigator({
-    
-  Login: {
+
+  MissionDetail: {
+    screen: MissionDetail,
+  },
+  CheckpointDetail: {
+    screen: CheckpointDetail,
+  },
+  CheckpointLocation: {
+      screen: CheckpointLocation,
+    },
+    CheckpointReview: {
+      screen: CheckpointReview,
+    },
+    Login: {
       screen: Login
     },
     SearchMission: {
@@ -22,12 +37,7 @@ const Router = StackNavigator({
     CurrentMission: {
       screen: CurrentMission
     },
-    CheckpointDetail: {
-      screen: CheckpointDetail,
-    },
-    MissionDetail: {
-      screen: MissionDetail,
-    },
+
     SelectTeam: {
         screen: SelectTeam
     },

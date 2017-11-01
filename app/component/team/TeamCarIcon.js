@@ -40,7 +40,8 @@ export default class TeamCarIcon extends Component {
 const styles = StyleSheet.create({
     CarImg: {
         width: 100,
-        height: 85
+        height: 85,
+        marginTop: 20,
     },
   });
 

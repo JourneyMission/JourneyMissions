@@ -19,16 +19,16 @@ export default class CurrentMission extends Component {
         const {state} = this.props.navigation;
         this.state = {
             isLoading: true,
-            id: 1,
-            fbId: '100000271633032',
-            team: 'bear',
-            apiURL: 'http://10.0.2.2/api',
+            id: state.params.id,
+            fbId: state.params.fbId,
+            team: state.params.team,
+            apiURL: state.params.apiURL,
           };
     }
 
     componentDidMount() {
         let URL = this.state.apiURL + '/JoinMissions?search=Profile_ID:' + this.state.id + ';Mission_Status:1&with=Mission';
-        console.log(URL);
+        
         return fetch(URL, {
             method: 'GET',
             headers: {

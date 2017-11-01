@@ -6,28 +6,32 @@ import {
   View,
   Image,
   Text,
+  Dimensions,
 } from 'react-native';
 
+const { width, height } = Dimensions.get('window');
 export default class CheckpointDetail extends Component {
-    
+    constructor(props) {
+        super(props);
+    }
     render() {
         return (
             <View style={styles.container}>
                 <View style={styles.checkpointRow}>
                     <Image style={styles.checkpointImg} source={require('../../img/rc_ic_missionName.png')} />
-                    <Text style={styles.checkpointName}>Checkpoint Name</Text>
+                    <Text style={styles.checkpointName}>{this.props.Checkpoint_Name}</Text>
                 </View>
                 <View style={styles.checkpointRow}>
                     <Image style={styles.checkpointImg} source={require('../../img/vm_icc_msDesc.png')} />
-                    <Text style={styles.checkpointText}>Checkpoitn Description</Text>
+                    <Text style={styles.checkpointText}>{this.props.Checkpoint_Descript}</Text>
                 </View>
                 <View style={styles.checkpointRow}>
                     <Image style={styles.checkpointImg} source={require('../../img/vm_icc_msScore.png')} />
-                    <Text style={styles.checkpointText}>Category</Text>
+                    <Text style={styles.checkpointText}>{this.props.Checkpoint_Category}</Text>
                 </View>
                 <View style={styles.checkpointRow}>
                     <Image style={styles.checkpointImg} source={require('../../img/vm_icc_score.png')} />
-                    <Text style={styles.checkpointText}>Your Score</Text>
+                    <Text style={styles.checkpointText}>{this.props.Checkpoint_Score}</Text>
                 </View>
             </View>
         );
@@ -50,8 +54,9 @@ export default class CheckpointDetail extends Component {
         checkpointText: {
             color: '#165A45',
             fontSize: 15,
-            textAlign: 'left',
-            paddingLeft: 5
+            textAlign: 'auto',
+            paddingLeft: 5,
+            width: width * 0.85,
         },
         checkpointImg: {
             width: 15,
