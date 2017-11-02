@@ -24,6 +24,8 @@ export default class RecommendMission extends Component {
           fbId: state.params.fbId,
           team: state.params.team,
           apiURL: state.params.apiURL,
+          score: state.params.score,
+          name: state.params.name,
         };
     }
 
@@ -53,6 +55,8 @@ export default class RecommendMission extends Component {
             fbId: state.params.fbId,
             team: state.params.team,
             apiURL: state.params.apiURL,
+            score: state.params.score,
+            name: state.params.name,
         };
         return variable;
     }

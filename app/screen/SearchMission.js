@@ -28,7 +28,9 @@ export default class SearchMission extends Component {
           id: state.params.id,
           fbId: state.params.fbId,
           team: state.params.team,
+          score: state.params.score,
           apiURL: state.params.apiURL,
+          name: state.params.name,
         };
     }
     
@@ -59,8 +61,10 @@ export default class SearchMission extends Component {
         const variable = {
             id: state.params.id,
             fbId: state.params.fbId,
+            score: state.params.score,
             team: state.params.team,
             apiURL: state.params.apiURL,
+            name: state.params.name,
         };
         return variable;
     }

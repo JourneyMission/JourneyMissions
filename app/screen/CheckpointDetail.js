@@ -25,14 +25,18 @@ export default class CheckpointDetail extends Component {
             isLoading: true,
             id: state.params.id,
             fbId: state.params.fbId,
+            score: state.params.score,
             team: state.params.team,
             apiURL: state.params.apiURL,
+            name: state.params.name,
             Mission_ID: state.params.Mission_ID,
             imgURL: 'http://journeymission.me/storage',
             Checkpoint_ID: state.params.Checkpoint_ID,
+            Mission_Score: state.params.Mission_Score,
+            back: state.params.back,
             Checkin: false,
             modalVisible: false,
-            back: state.params.back
+            JoinMission: state.params.JoinMission,
         };
     }
 
@@ -53,7 +57,7 @@ export default class CheckpointDetail extends Component {
                     Accept: 'application/json'
                 }
             }).then((response) => response.json()).then((responseJson) => {
-                this.setState({ checkpointPhoto: responseJson.data[0].Checkpoint_Photo});
+                this.setState({checkpointPhoto: responseJson.data[0].Checkpoint_Photo});
                 this.setState({
                     checkpoint_Photo: this.state.imgURL + '/checkpoint/' + this.state.checkpointPhoto
                 });
@@ -63,7 +67,7 @@ export default class CheckpointDetail extends Component {
                         Accept: 'application/json'
                     }
                 }).then((response) => response.json()).then((responseJson) => {
-                    if (responseJson.data.length !== 0) {
+                    if ((responseJson.data.length !== 0) && (this.state.JoinMission === true)) {
                         this.setState({Checkin: false, isLoading: false});
                     } else {
                         this.setState({Checkin: true, isLoading: false});
@@ -83,7 +87,7 @@ export default class CheckpointDetail extends Component {
     setModalVisible(visible) {
         this.setState({modalVisible: visible});
     }
-    
+
     sendVar() {
         const {state} = this.props.navigation;
         const variable = {
@@ -92,7 +96,10 @@ export default class CheckpointDetail extends Component {
             team: state.params.team,
             apiURL: state.params.apiURL,
             Mission_ID: state.params.Mission_ID,
-            back: this.state.back
+            score: state.params.score,
+            Mission_Score: state.params.Mission_Score,
+            back: this.state.back,
+            name: state.params.name
         };
         return variable;
     }
@@ -102,6 +109,7 @@ export default class CheckpointDetail extends Component {
         const variable = this.sendVar();
         variable['Mission_ID'] = state.params.Mission_ID;
         variable['Checkpoint_ID'] = Checkpoint_ID;
+        variable['JoinMission'] = this.state.JoinMission;
         variable['back'] = this.state.back;
         return variable;
     }
@@ -110,16 +118,97 @@ export default class CheckpointDetail extends Component {
         this.setState({isLoading: true});
         let Checkin_Date = Moment(new Date()).format('YYYY-MM-DD');
         let CheckinURL = this.state.apiURL + '/Checkins?Mission_ID=' + this.state.Mission_ID + '&Checkpoint_ID=' + this.state.Checkpoint_ID + '&Profile_ID=' + this.state.id + '&Checkin_Date=' + Checkin_Date;
+        console.log(CheckinURL);
         fetch(CheckinURL, {
             method: 'POST',
             headers: {
                 Accept: 'application/json'
             }
         }).then((response) => response.json()).then((responseJson) => {
-            this.setState({Checkin: false, isLoading: false, modalVisible: true});
+            this.addScore();
+            this.setState({
+                Checkin: false
+            });
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+
+    checkSpeacialTime() {
+        if (this.state.checkpoint.Checkpoint_StartDate !== null || this.state.checkpoint.Checkpoint_EndDate !== null) {
+            let StartDateTime = Moment(this.state.checkpoint.Checkpoint_StartDate + 'T0').format('YYYY-MM-DD HH:MM:SS');
+            let EndDateTime = Moment(this.state.checkpoint.Checkpoint_EndDate + 'T0').format('YYYY-MM-DD HH:MM:SS');
+            return Moment(new Date()).isBetween(StartDateTime, EndDateTime);
+        } else if (this.state.checkpoint.Checkpoint_StartTime !== null || this.state.checkpoint.Checkpoint_EndTime !== null) {
+            let StartDateTime = Moment('0T' + this.state.checkpoint.Checkpoint_StartTime).format('YYYY-MM-DD HH:MM:SS');
+            let EndDateTime = Moment('0T' + this.state.checkpoint.Checkpoint_EndTime).format('YYYY-MM-DD HH:MM:SS');
+            return Moment(new Date()).isBetween(StartDateTime, EndDateTime);
+        } else if (this.state.checkpoint.Checkpoint_StartDate !== null || this.state.checkpoint.Checkpoint_EndDate !== null && this.state.checkpoint.Checkpoint_StartTime !== null || this.state.checkpoint.Checkpoint_EndTime !== null) {
+            let StartDateTime = Moment(this.state.checkpoint.Checkpoint_StartDate + 'T' + this.state.checkpoint.Checkpoint_StartTime).format('YYYY-MM-DD HH:MM:SS');
+            let EndDateTime = Moment(this.state.checkpoint.Checkpoint_EndDate + 'T' + this.state.checkpoint.Checkpoint_EndTime).format('YYYY-MM-DD HH:MM:SS');
+            return Moment(new Date()).isBetween(StartDateTime, EndDateTime);
+            
+        }
+        return false;
+    }
+
+    checkCompleteMission() {
+        let URL = this.state.apiURL + '/CheckMission/' + this.state.Mission_ID + '/' + this.state.id;
+        let URL2 = this.state.apiURL + '/CheckpointinMission/' + this.state.Mission_ID;
+        fetch(URL, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json'
+            }
+        }).then((response) => response.json()).then((responseJson) => {
+            let Checkindata = responseJson.data;
+            fetch(URL2, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json'
+                }
+            }).then((response) => response.json()).then((responseJson) => {
+                let MissionCheckpoint = responseJson.data;
+                return ((Checkindata.length === MissionCheckpoint.length) &&
+                (MissionCheckpoint.every((e, v) => {
+                    return e === Checkindata[v];
+                })));
+            }).catch((error) => {
+                console.error(error);
+            });
         }).catch((error) => {
             console.error(error);
         });
+        
+    }
+
+    addScore() {
+        let NewScore = this.state.checkpoint.Checkpoint_Score;
+        if (this.checkSpeacialTime) {
+            NewScore += this.state.checkpoint.Checkpoint_SpeacialScore;
+        }
+        if(this.checkCompleteMission){
+            NewScore += this.state.Mission_Score;
+        }
+        console.log(this.state.score);
+        let score = parseInt(this.state.score) + NewScore;
+        let URL = this.state.apiURL + '/Profiles/' + this.state.id + '?Profile_Score=' + score;
+        fetch(URL, {
+            method: 'PATCH',
+            headers: {
+                Accept: 'application/json'
+            }
+        }).then((response) => response.json()).then((responseJson) => {
+            this.setState({
+                NewScore: NewScore,
+                score: responseJson.data.Profile_Score,
+                isLoading: false
+            });
+            alert('You got '+ this.state.NewScore + 'Point');
+        }).catch((error) => {
+            console.error(error);
+        });
+
     }
 
     checkinButton(value) {
@@ -135,7 +224,7 @@ export default class CheckpointDetail extends Component {
             return (
                 <TouchableHighlight>
                     <View style={styles.CheckinBtnDisable}>
-                        <Text>Already Check in</Text>
+                        <Text>Check in</Text>
                     </View>
                 </TouchableHighlight>
             );
@@ -175,7 +264,7 @@ export default class CheckpointDetail extends Component {
                     <View style={styles.nav}>
                         <View>
                             <TouchableOpacity onPress={() => navigate('MissionDetail', this.sendVar())}>
-                                <Image style={styles.navBack} source={require('../img/vm_btt_back.png')}/>
+                                <Image style={styles.navBack} source={require('../img/rc_btt_back.png')}/>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.navTitle}/>

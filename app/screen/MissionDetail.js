@@ -26,10 +26,12 @@ export default class MissionDetail extends Component {
             id: state.params.id,
             fbId: state.params.fbId,
             team: state.params.team,
+            score: state.params.score,
             apiURL: state.params.apiURL,
+            name: state.params.name,
             Mission_ID: state.params.Mission_ID,
             back: state.params.back,
-            imgURL: 'http://journeymission.me/storage'
+            imgURL: 'https://www.journeymission.me/storage'
         };
 
     }
@@ -54,7 +56,15 @@ export default class MissionDetail extends Component {
             this.setState({
                 Missionimg: this.state.imgURL + '/mission/photo/' + this.state.Mission.Mission_Photo
             });
-
+            console.log(this.state.Missionimg);
+            Image.getSize(this.state.Missionimg, (widthMissionImg, heightMissionImg) => {
+                this.setState({
+                    widthMissionImg: widthMissionImg,
+                    heightMissionImg: heightMissionImg,
+                });
+                console.log(this.state.widthMissionImg);
+                console.log(this.state.heightMissionImg);
+            });
             fetch(URL2, {
                 method: 'GET',
                 headers: {
@@ -109,7 +119,9 @@ export default class MissionDetail extends Component {
             id: state.params.id,
             fbId: state.params.fbId,
             team: state.params.team,
-            apiURL: state.params.apiURL
+            apiURL: state.params.apiURL,
+            score: state.params.score,
+            name: state.params.name
         };
         return variable;
     }
@@ -119,6 +131,8 @@ export default class MissionDetail extends Component {
         const variable = this.sendVar();
         variable['Mission_ID'] = this.state.Mission_ID;
         variable['Checkpoint_ID'] = Checkpoint_ID;
+        variable['Mission_Score'] = this.state.Mission.Mission_Score;
+        variable['JoinMission'] = this.state.JoinMission;
         variable['back'] = this.state.back;
         return variable;
     }
@@ -126,33 +140,38 @@ export default class MissionDetail extends Component {
     checkpointIconLeft(Name, CheckpointImg, id) {
         return (
             <View style={styles.CheckpointLeft}>
-                {this.checkpointIconCheck(CheckpointImg, id)}
-                <Text style={styles.CheckpointName}>
-                    {Name}
-                </Text>
+                {this.checkpointIconCheck(Name,CheckpointImg, id)}
             </View>
         );
     }
     checkpointIconRight(Name, CheckpointImg, id) {
         return (
             <View style={styles.CheckpointRight}>
-                {this.checkpointIconCheck(CheckpointImg, id)}
-                <Text style={styles.CheckpointName}>
-                    {Name}
-                </Text>
+                {this.checkpointIconCheck(Name,CheckpointImg, id)}
             </View>
         );
     }
-    checkpointIconCheck(CheckpointImg, id) {
+    checkpointIconCheck(Name,CheckpointImg, id) {
         let img = this.state.imgURL + '/checkpoint/grayicon/' + CheckpointImg;
         if (this.state.CheckMission.indexOf(id) !== -1) {
             img = this.state.imgURL + '/checkpoint/icon/' + CheckpointImg;
         } else {
             img = this.state.imgURL + '/checkpoint/grayicon/' + CheckpointImg;
         }
-        return (<Image style={styles.CheckpointImg} source={{
-            uri: img
-        }}/>);
+        return (
+            <View style={styles.CheckpointIcon}>
+                <Image style={styles.CheckpointImgCover} source={require('../img/vm_icc_checkpoint_pic.png')}>
+                    <Image style={styles.CheckpointImg} source={{
+                        uri: img
+                    }}/>
+                </Image>
+                <View style={styles.CheckpointNameCover}>
+                    <Text style={styles.CheckpointName}>
+                        {Name}
+                    </Text>
+                </View>
+            </View>
+        );
 
     }
     checkpointIcon(Name, CheckpointImg, rowID, id) {
@@ -242,6 +261,8 @@ export default class MissionDetail extends Component {
                     </View>
                     {this.completeMission(this.state.Mission_Status)}
                 </View>
+                <ScrollView style={styles.Scroll}>
+                
                 <MissionDesc
                     style={styles.Desc}
                     Mission_Description={this.state.Mission.Mission_Description}
@@ -249,19 +270,11 @@ export default class MissionDetail extends Component {
                     Mission_Destination={this.state.Mission.mission_destination.Provience_Name}
                     Mission_Category={this.state.Mission.category_mission.Category_Mission_Name}
                     Mission_Score={this.state.Mission.Mission_Score}/>
-                <ScrollView style={styles.Scroll}>
                     <Image
-                        style={styles.Map}
+                        style={[styles.Map]}
                         source={{
                         uri: this.state.Missionimg
                     }}>
-                        <View style={styles.row}>
-                            <View>
-                                <TeamCarIcon team={this.state.team}/>
-                            </View>
-                            <View/>
-                            <View/>
-                        </View>
                         <ListView
                             dataSource={this.state.dataSource}
                             renderRow={(rowData) => <TouchableOpacity
@@ -284,7 +297,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFF',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        paddingTop: height * 0.14
+        paddingTop: height * 0.12
     },
     nav: {
         width: width,
@@ -313,17 +326,6 @@ const styles = StyleSheet.create({
         height: 44,
         resizeMode: 'cover'
     },
-    navBtn: {
-        borderWidth: 2,
-        borderColor: '#165A45',
-        width: width * 0.2,
-        alignItems: 'center',
-        borderRadius: 50
-    },
-    navBtnText: {
-        color: '#165A45',
-        fontWeight: 'bold'
-    },
     navBack: {
         width: width * 0.07,
         height: height * 0.07
@@ -338,37 +340,55 @@ const styles = StyleSheet.create({
         flex: 1
     },
     Map: {
-        width: width,
         zIndex: 100,
         top: 0,
-        justifyContent: 'space-around',
-        alignItems: 'center'
+        alignItems: 'center',
+        resizeMode: 'cover',
     },
     CheckpointLeft: {
         alignItems: 'flex-start',
         width: width,
-        marginLeft: 100
+        marginLeft: 10
+    },
+    CheckpointIcon: {
+        alignItems: 'center',
+    },
+    CheckpointImgCover: {
+        width: 80,
+        height: 94,
+        marginTop: 20,
+        marginBottom: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     CheckpointImg: {
-        width: 70,
-        height: 70,
-        borderWidth: 7,
-        borderColor: '#FFF',
-        borderRadius: 70,
-        marginTop: 20
+        marginTop: -17,
+        width: 50,
+        height: 50,
+        position: 'relative',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     CheckpointRight: {
         alignItems: 'flex-end',
         width: width,
-        marginRight: 150
+        marginRight: 10
     },
     row: {
         flexDirection: 'row',
         justifyContent: 'space-around',
         width: width
     },
+    CheckpointNameCover: {
+        marginBottom: 15,
+        backgroundColor: '#F9D565',
+        paddingLeft: 10,
+        paddingRight: 10,
+        borderRadius: 10,
+        borderColor: '#F9D565',
+    },
     CheckpointName: {
-        marginBottom: 15
+        flexWrap: 'wrap',
     }
 });
 

@@ -23,7 +23,9 @@ export default class SelectTeam extends Component {
             isLoading: false,
             id: state.params.id,
             fbId: state.params.fbId,
-            apiURL: state.params.apiURL
+            apiURL: state.params.apiURL,
+            score: state.params.score,
+            name: state.params.name
         };
     }
 
@@ -45,7 +47,9 @@ export default class SelectTeam extends Component {
             id: state.params.id,
             fbId: state.params.fbId,
             team: this.state.team,
-            apiURL: state.params.apiURL
+            score: state.params.score,
+            apiURL: state.params.apiURL,
+            name: this.state.name
         };
         return variable;
     }

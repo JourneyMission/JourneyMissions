@@ -8,6 +8,10 @@ import {
   Dimensions,
   TouchableOpacity
 } from 'react-native';
+import {
+  LoginManager, 
+  AccessToken
+} from 'react-native-fbsdk';
 import TeamWithProfile from '../component/team/TeamWithProfile';
 
 const { width, height } = Dimensions.get('window');
@@ -19,25 +23,33 @@ export default class Home extends Component {
             id: state.params.id,
             fbId: state.params.fbId,
             team: state.params.team,
+            score: state.params.score,
             apiURL: state.params.apiURL,
+            name: state.params.name
         };
     }
-    componentDidmount(){
-
+    Logout(){
+        const { navigate } = this.props.navigation;
+        LoginManager.logOut();
+        navigate('Login');
     }
   render() {
     const { navigate } = this.props.navigation;
     return (
         <View style={styles.container}>
             <View style={styles.nav}>
-                <View/>
+                    <TouchableOpacity activeOpacity={0.8} onPress={() => this.Logout()}>
+                        <Image style={styles.navSearch} source={require('../img/Logout_btn.png')} />
+                    </TouchableOpacity>
             </View>
-                <TeamWithProfile team={this.state.team} fbId={this.state.fbId} />
-                <Text style={styles.name}>Songrit Keardphol</Text>
-                <TouchableOpacity onPress={() => navigate('CurrentMission', this.state)}>
+                <TouchableOpacity activeOpacity={0.8} onPress={() => navigate('Profile', this.state)}>
+                    <TeamWithProfile team={this.state.team} fbId={this.state.fbId} />
+                </TouchableOpacity>
+                <Text style={[styles.name, this.state.team === 'fox' ? styles.foxColor : styles.bearColor]}>{this.state.name}</Text>
+                <TouchableOpacity activeOpacity={0.8} onPress={() => navigate('CurrentMission', this.state)}>
                     <Image style={styles.btn} source={require('../img/bt_continue.png')} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigate('RecommendMission', this.state)}>
+                <TouchableOpacity activeOpacity={0.8} onPress={() => navigate('RecommendMission', this.state)}>
                     <Image style={styles.btn} source={require('../img/bt_start.png')} />
                 </TouchableOpacity>
                 <Image style={styles.bg} source={require('../img/mm_bg_prop.png')} />
@@ -70,10 +82,15 @@ const styles = StyleSheet.create({
         height: height * 0.07,
     },
     name: {
-        color: 'fox' === 'fox' ? '#554126' : '#F15A24',
         fontSize: 30,
         fontWeight: 'bold',
         paddingBottom: 15,
+    },
+    foxColor: {
+        color: '#554126',
+    },
+    BearColor: {
+        color: '#F15A24',
     },
     bg: {
         width: width,

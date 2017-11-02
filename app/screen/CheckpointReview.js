@@ -12,8 +12,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import Scorebar from '../component/main/Scorebar';
-import Detail from '../component/checkpoints/Detail';
+import Name from '../component/checkpoints/Name';
 
 const { width, height } = Dimensions.get('window');
 export default class CheckpointReview extends Component {
@@ -24,14 +23,16 @@ export default class CheckpointReview extends Component {
             isLoading: true,
             id: state.params.id,
             fbId: state.params.fbId,
+            score: state.params.score,
             team: state.params.team,
             apiURL: state.params.apiURL,
+            name: state.params.name,
             Mission_ID: state.params.Mission_ID,
             imgURL: 'http://journeymission.me/storage',
             Checkpoint_ID: state.params.Checkpoint_ID,
-            Checkin: false,
-            modalVisible: false,
-            back: state.params.back
+            Mission_Score: state.params.Mission_Score,
+            back: state.params.back,
+            JoinMission: state.params.JoinMission,
         };
     }
 
@@ -76,7 +77,10 @@ export default class CheckpointReview extends Component {
             fbId: state.params.fbId,
             team: state.params.team,
             apiURL: state.params.apiURL,
+            name: state.params.name,
             Mission_ID: state.params.Mission_ID,
+            score: state.params.score,
+            Mission_Score: state.params.Mission_Score,
             back: this.state.back
         };
         return variable;
@@ -87,6 +91,7 @@ export default class CheckpointReview extends Component {
         const variable = this.sendVar();
         variable['Mission_ID'] = state.params.Mission_ID;
         variable['Checkpoint_ID'] = Checkpoint_ID;
+        variable['JoinMission'] = this.state.JoinMission;
         variable['back'] = this.state.back;
         return variable;
     }
@@ -129,31 +134,14 @@ export default class CheckpointReview extends Component {
             </TouchableOpacity>
                 </View>
                 <View style={styles.Desc}>
-                    <ScrollView style={styles.Scroll}>
-                        <View style={styles.checkpoint}>
-                            <View style={styles.checkpointContent}>
-                                <View style={styles.checkpointRow}>
-                                    <Detail 
-                                    Checkpoint_Name={this.state.checkpoint.Checkpoint_Name} 
-                                    Checkpoint_Descript={this.state.checkpoint.Checkpoint_Description}
-                                    Checkpoint_Score={this.state.checkpoint.Checkpoint_Score}
-                                    Checkpoint_Category={this.state.checkpoint.category_checkpoint.Category_Checkpoint_Name}
-                                    />
-                                </View>
-                                <View style={styles.checkpointRowCenter}>
-                                    <TouchableOpacity>
-                                        <View style={styles.CheckinBtn}>
-                                            <Text style={styles.CheckinBtnText}>Check in</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={styles.checkpointRow}>
-                                    <Scorebar />
-                                </View>
-                            </View>
+                <View style={styles.checkpoint}>
+                    <View style={styles.checkpointContent}>
+                        <View style={styles.checkpointRow}>
+                            <Name Checkpoint_Name={this.state.checkpoint.Checkpoint_Name}/>
                         </View>
-                    </ScrollView>
+                    </View>
                 </View>
+            </View>
             </View>
         );
     }

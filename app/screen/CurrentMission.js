@@ -22,13 +22,15 @@ export default class CurrentMission extends Component {
             id: state.params.id,
             fbId: state.params.fbId,
             team: state.params.team,
+            score: state.params.score,
             apiURL: state.params.apiURL,
+            name: state.params.name
           };
     }
 
     componentDidMount() {
         let URL = this.state.apiURL + '/JoinMissions?search=Profile_ID:' + this.state.id + ';Mission_Status:1&with=Mission';
-        
+        console.log(URL);
         return fetch(URL, {
             method: 'GET',
             headers: {
@@ -39,8 +41,8 @@ export default class CurrentMission extends Component {
                 rowHasChanged: (r1, r2) => r1 !== r2
             });
             this.setState({
+                dataSource: missions.cloneWithRows(responseJson.data),
                 isLoading: false,
-                dataSource: missions.cloneWithRows(responseJson.data[0].mission)
             });
             
         }).catch((error) => {
@@ -55,6 +57,8 @@ export default class CurrentMission extends Component {
             fbId: state.params.fbId,
             team: state.params.team,
             apiURL: state.params.apiURL,
+            score: state.params.score,
+            name: state.params.name,
         };
         return variable;
     }
@@ -104,15 +108,16 @@ export default class CurrentMission extends Component {
                     </Text>
                 </View>
                 <Image style={styles.bg} source={require('../img/cm_bg_prop.png')} />
+                
                 <ListView
                     style={styles.mission}
                     dataSource={this.state.dataSource}
                     renderRow={(rowData) => <TouchableOpacity
-                    onPress={() => navigate('MissionDetail', this.sendVartoCheckpoint(rowData.id))} >
+                    onPress={() => navigate('MissionDetail', this.sendVartoCheckpoint(rowData.mission[0].id))} >
                     <Mission
-                        Mission_Name={rowData.Mission_Name}
-                        Mission_Description={rowData.Mission_Description}
-                        Mission_Icon={rowData.Mission_Icon} />
+                        Mission_Name={rowData.mission[0].Mission_Name}
+                        Mission_Description={rowData.mission[0].Mission_Description}
+                        Mission_Icon={rowData.mission[0].Mission_Icon} />
                 </TouchableOpacity>} />
             </View>
         );

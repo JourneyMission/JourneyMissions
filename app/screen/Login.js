@@ -20,7 +20,7 @@ export default class Login extends Component {
     const {state} = this.props.navigation;
     this.state = {
       isLoading: true,
-      apiURL: 'http://10.0.2.2/api'
+      apiURL: 'https://www.journeymission.me/api'
     };
   }
 
@@ -29,7 +29,9 @@ export default class Login extends Component {
       id: this.state.id,
       fbId: this.state.fbId,
       apiURL: this.state.apiURL,
-      accessToken: this.state.accessToken
+      accessToken: this.state.accessToken,
+      score: this.state.score,
+      name: this.state.name
     };
     if (team !== 0) {
       if (team === 'fox') {
@@ -42,6 +44,7 @@ export default class Login extends Component {
   }
   addProfile(pid, name, email, accessToken) {
     let URL = this.state.apiURL + '/Profiles?Profile_ProviderID=' + pid + '&Profile_Name=' + name + '&Profile_Email=' + email + '&Profile_AccessToken=' + accessToken;
+    console.log(URL);
     const { navigate } = this.props.navigation;
     fetch(URL, {
       method: 'POST',
@@ -77,18 +80,17 @@ export default class Login extends Component {
   componentDidMount(){
     AccessToken.getCurrentAccessToken().then(
       (data) => {
-        if(data.accessToken != null){
-          this.loginWithFb(data.accessToken);
-        }else{
-          this.setState({
-            isLoading: false,
-          });
-        }
+        this.loginWithFb(data.accessToken);
       } 
-    );
+    ).catch(() => {
+      this.setState({
+        isLoading: false,
+      });
+    });
   }
   checkProfile(pid, name, email, accessToken) {
     let URL = this.state.apiURL + '/Profiles?search=Profile_ProviderID:' + pid;
+    console.log(URL);
     const { navigate } = this.props.navigation;
     fetch(URL, {
       method: 'GET',
@@ -99,8 +101,10 @@ export default class Login extends Component {
       this.setState({
         isLoading: true,
         id: responseJson.data[0].id,
+        name: responseJson.data[0].Profile_Name,
         fbId: responseJson.data[0].Profile_ProviderID,
         accessToken: responseJson.data[0].Profile_AcessToken,
+        score: responseJson.data[0].Profile_Score,
       });
       if (responseJson.data.length === 0) {
         this.addProfile(pid, name, email, accessToken);
@@ -152,6 +156,9 @@ export default class Login extends Component {
             AccessToken
               .getCurrentAccessToken()
               .then((data) => {
+                this.setState({
+                  isLoading: true,
+                });
                 this.loginWithFb(data.accessToken.toString());
               })
           }

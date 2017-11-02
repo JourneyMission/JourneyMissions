@@ -1,4 +1,4 @@
-import {StackNavigator} from 'react-navigation';
+import { StackNavigator } from 'react-navigation';
 import CurrentMission from '../screen/CurrentMission';
 import RecommendMission from '../screen/RecommendMission';
 import SearchMission from '../screen/SearchMission';
@@ -9,12 +9,29 @@ import SelectTeam from '../screen/SelectTeam';
 import CheckpointDetail from '../screen/CheckpointDetail';
 import CheckpointLocation from '../screen/CheckpointLocation';
 import CheckpointReview from '../screen/CheckpointReview';
-import G from '../screen/G';
+import Profile from '../screen/Profile';
+import ProfileBadge from '../screen/ProfileBadge';
+import ProfileRanking from '../screen/ProfileRanking';
 
 const Router = StackNavigator({
+  
+  
+  
 
   Login: {
     screen: Login
+  },
+  Profile: {
+    screen: Profile
+  },
+  ProfileRanking: {
+    screen: ProfileRanking
+  },
+  ProfileBadge: {
+    screen: ProfileBadge
+  },
+  MissionDetail: {
+    screen: MissionDetail
   },
   SearchMission: {
     screen: SearchMission
@@ -24,9 +41,6 @@ const Router = StackNavigator({
   },
   CurrentMission: {
     screen: CurrentMission
-  },
-  MissionDetail: {
-    screen: MissionDetail
   },
   CheckpointDetail: {
     screen: CheckpointDetail

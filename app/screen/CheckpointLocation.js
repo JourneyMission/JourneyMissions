@@ -21,8 +21,10 @@ export default class CheckpointLocation extends Component {
             isLoading: true,
             id: state.params.id,
             fbId: state.params.fbId,
+            score: state.params.score,
             team: state.params.team,
             apiURL: state.params.apiURL,
+            name: state.params.name,
             Mission_ID: state.params.Mission_ID,
             imgURL: 'http://journeymission.me/storage',
             Checkpoint_ID: state.params.Checkpoint_ID,
@@ -30,7 +32,9 @@ export default class CheckpointLocation extends Component {
                 latitude: 0,
                 longitude: 0,
             },
-            back: state.params.back
+            Mission_Score: state.params.Mission_Score,
+            back: state.params.back,
+            JoinMission: state.params.JoinMission,
           };
           
     }
@@ -100,6 +104,9 @@ export default class CheckpointLocation extends Component {
             team: state.params.team,
             apiURL: state.params.apiURL,
             Mission_ID: state.params.Mission_ID,
+            score: state.params.score,
+            name: state.params.name,
+            Mission_Score: state.params.Mission_Score,
             back: this.state.back
         };
         return variable;
@@ -110,6 +117,7 @@ export default class CheckpointLocation extends Component {
         const variable = this.sendVar();
         variable['Mission_ID'] = state.params.Mission_ID;
         variable['Checkpoint_ID'] = Checkpoint_ID;
+        variable['JoinMission'] = this.state.JoinMission;
         variable['back'] = this.state.back;
         return variable;
     }
