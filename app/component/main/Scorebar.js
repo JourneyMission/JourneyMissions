@@ -17,7 +17,9 @@ export default class Scorebar extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <View />
+                <View>
+                    <View />
+                </View>
             </View>
         );
       }
@@ -25,11 +27,11 @@ export default class Scorebar extends Component {
     }
     const styles = StyleSheet.create({
         container: {
-            flex: 1,
-            backgroundColor: '#FFF',
+            backgroundColor: '#ccc',
             justifyContent: 'flex-start',
             alignItems: 'center',
-            paddingTop: height * 0.14,
+            width: width * 0.7,
+            height: 25,
           },
           nav: {
               width: width,

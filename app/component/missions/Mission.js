@@ -13,7 +13,7 @@ export default class Mission extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          img : 'http://journeymission.me/storage/mission/icon/' + this.props.Mission_Icon
+          img: 'http://journeymission.me/storage/mission/icon/' + this.props.Mission_Icon
         };
     }
   render() {
@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
         height: 100,
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
-        resizeMode: 'cover',
         flexDirection: 'row',
         marginBottom: 10,
     },

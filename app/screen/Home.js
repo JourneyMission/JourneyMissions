@@ -8,36 +8,48 @@ import {
   Dimensions,
   TouchableOpacity
 } from 'react-native';
-
+import {
+  LoginManager, 
+  AccessToken
+} from 'react-native-fbsdk';
+import TeamWithProfile from '../component/team/TeamWithProfile';
 
 const { width, height } = Dimensions.get('window');
 export default class Home extends Component {
     constructor(props) {
         super(props);
         const { state } = this.props.navigation; 
-        
-        const team = state.params.team;
         this.state = {
-          cover: state.params.team,
-          id: 1
+            id: state.params.id,
+            fbId: state.params.fbId,
+            team: state.params.team,
+            score: state.params.score,
+            apiURL: state.params.apiURL,
+            name: state.params.name
         };
     }
-
+    Logout(){
+        const { navigate } = this.props.navigation;
+        LoginManager.logOut();
+        navigate('Login');
+    }
   render() {
     const { navigate } = this.props.navigation;
     return (
         <View style={styles.container}>
             <View style={styles.nav}>
-            <Image style={styles.navSearch} source={require('../img/rc_btt_search.png')} />
+                    <TouchableOpacity activeOpacity={0.8} onPress={() => this.Logout()}>
+                        <Image style={styles.navSearch} source={require('../img/Logout_btn.png')} />
+                    </TouchableOpacity>
             </View>
-                <Image style={styles.teammask} source={require('../img/mm_team_fox.png')} >
-                    <Image style={styles.avatar} source={{ uri: 'https://graph.facebook.com/100000271633032/picture?type=large' }} />
-                </Image>
-                <Text style={styles.name}>Songrit Keardphol</Text>
-                <TouchableOpacity onPress={() => navigate('CurrentMission', { team: this.state.team, id: this.state.id })}>
+                <TouchableOpacity activeOpacity={0.8} onPress={() => navigate('Profile', this.state)}>
+                    <TeamWithProfile team={this.state.team} fbId={this.state.fbId} />
+                </TouchableOpacity>
+                <Text style={[styles.name, this.state.team === 'fox' ? styles.foxColor : styles.bearColor]}>{this.state.name}</Text>
+                <TouchableOpacity activeOpacity={0.8} onPress={() => navigate('CurrentMission', this.state)}>
                     <Image style={styles.btn} source={require('../img/bt_continue.png')} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigate('RecommendMission', { team: this.state.team, id: this.state.id })}>
+                <TouchableOpacity activeOpacity={0.8} onPress={() => navigate('RecommendMission', this.state)}>
                     <Image style={styles.btn} source={require('../img/bt_start.png')} />
                 </TouchableOpacity>
                 <Image style={styles.bg} source={require('../img/mm_bg_prop.png')} />
@@ -46,7 +58,6 @@ export default class Home extends Component {
   }
 }
 const styles = StyleSheet.create({
-    
     container: {
       flex: 1,
       backgroundColor: '#FBD54A',
@@ -71,10 +82,15 @@ const styles = StyleSheet.create({
         height: height * 0.07,
     },
     name: {
-        color: 'fox' === 'fox' ? '#554126' : '#F15A24',
         fontSize: 30,
         fontWeight: 'bold',
         paddingBottom: 15,
+    },
+    foxColor: {
+        color: '#554126',
+    },
+    BearColor: {
+        color: '#F15A24',
     },
     bg: {
         width: width,
@@ -83,21 +99,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         zIndex: -100,
         bottom: 0,
-    },
-    avatar: {
-        width: width * 0.5,
-        height: width * 0.5,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: width * 0.5,
-        zIndex: -100,
-    },
-    teammask: {
-        width: width * 0.5,
-        height: width * 0.5,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 10,
     },
     btn: {
         width: width * 0.7,

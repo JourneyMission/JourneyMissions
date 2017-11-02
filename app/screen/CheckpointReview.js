@@ -6,73 +6,145 @@ import {
   View,
   Dimensions,
   TouchableOpacity,
+  TouchableHighlight,
   Image,
   Text,
-  ScrollView
+  ScrollView,
+  ActivityIndicator,
 } from 'react-native';
-import Scorebar from '../component/main/Scorebar';
-import Detail from '../component/checkpoints/Detail';
+import Name from '../component/checkpoints/Name';
 
 const { width, height } = Dimensions.get('window');
-export default class CheckpointLocation extends Component {
+export default class CheckpointReview extends Component {
+    constructor(props) {
+        super(props);
+        const { state } = this.props.navigation; 
+        this.state = {
+            isLoading: true,
+            id: state.params.id,
+            fbId: state.params.fbId,
+            score: state.params.score,
+            team: state.params.team,
+            apiURL: state.params.apiURL,
+            name: state.params.name,
+            Mission_ID: state.params.Mission_ID,
+            imgURL: 'http://journeymission.me/storage',
+            Checkpoint_ID: state.params.Checkpoint_ID,
+            Mission_Score: state.params.Mission_Score,
+            back: state.params.back,
+            JoinMission: state.params.JoinMission,
+        };
+    }
+
+    componentDidMount() {
+        let checkpointURL = this.state.apiURL + '/Checkpoints?search=id:' + this.state.Checkpoint_ID;
+        let checkpointPhotoURL = this.state.apiURL + '/CheckpointPhotos?search=Checkpoint_ID:' + this.state.Checkpoint_ID + '&orderBy=created_at';
+        return fetch(checkpointURL, {
+            method: 'GET',
+            headers: { Accept: 'application/json' }
+             }).then((response) => response.json())
+          .then((responseJson) => {
+            this.setState({
+              checkpoint: responseJson[0],
+            });
+            fetch(checkpointPhotoURL, {
+                method: 'GET',
+                headers: { Accept: 'application/json' }
+                 }).then((response) => response.json())
+              .then((responseJson) => {
+                this.setState({
+                  isLoading: false,
+                  checkpointPhoto: responseJson.data[0].Checkpoint_Photo,
+                });
+                this.setState({
+                    checkpoint_Photo: this.state.imgURL + '/checkpoint/' + this.state.checkpointPhoto,
+                });
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+          
+      }
     
+      sendVar() {
+        const {state} = this.props.navigation;
+        const variable = {
+            id: state.params.id,
+            fbId: state.params.fbId,
+            team: state.params.team,
+            apiURL: state.params.apiURL,
+            name: state.params.name,
+            Mission_ID: state.params.Mission_ID,
+            score: state.params.score,
+            Mission_Score: state.params.Mission_Score,
+            back: this.state.back
+        };
+        return variable;
+    }
+
+    sendVartoCheckpoint(Checkpoint_ID) {
+        const {state} = this.props.navigation;
+        const variable = this.sendVar();
+        variable['Mission_ID'] = state.params.Mission_ID;
+        variable['Checkpoint_ID'] = Checkpoint_ID;
+        variable['JoinMission'] = this.state.JoinMission;
+        variable['back'] = this.state.back;
+        return variable;
+    }
+
     render() {
-        return (
+        const { navigate } = this.props.navigation;
+        const { goBack } = this.props.navigation;
+        if (this.state.isLoading) {
+            return (
+                < ActivityIndicator />
+            );
+        } else {
+            return (
             <View style={styles.container}>
                 <View style={styles.nav}>
                     <View>
-                        <TouchableOpacity onPress={() => this.props.navigation.navigate('MissionDetail')}>
+                        <TouchableOpacity onPress={() => navigate('MissionDetail', this.sendVar())}>
                             <Image style={styles.navBack} source={require('../img/vm_btt_back.png')} />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.navTitle} />
-                    <TouchableOpacity onPress={null}>
-                        <View style={styles.navBtn}>
-                            <Text style={styles.navBtnText}>Join</Text>
-                        </View>
-                    </TouchableOpacity>
+                    <View />
                 </View>
-                <Image style={styles.CheckpointPhoto} source={require('../img/vm_pattern.png')} />
+                <Image style={styles.CheckpointPhoto} source={{ uri: this.state.checkpoint_Photo }} />
                 <View style={styles.CheckpointMenu}>
-                    <TouchableOpacity>
-                        <View style={[styles.CheckpointMenuBtn, styles.normal]}>
-                            <Text>Checkin</Text>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                        <View style={[styles.CheckpointMenuBtn, styles.normal]}>
-                            <Text style={styles.normalText}>Location</Text>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                        <View style={[styles.CheckpointMenuBtn, styles.active]}>
-                            <Text style={styles.normalText}>Review</Text>
-                        </View>
-                    </TouchableOpacity>
+                <TouchableOpacity activeOpacity={0.8} onPress={() => navigate('CheckpointDetail', this.sendVartoCheckpoint(this.state.Checkpoint_ID))}>
+                <View style={[styles.CheckpointMenuBtn, styles.normal]}>
+                    <Text style={styles.normalText}>Checkin</Text>
+                </View>
+            </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.8} onPress={() => navigate('CheckpointLocation', this.sendVartoCheckpoint(this.state.Checkpoint_ID))}>
+                <View style={[styles.CheckpointMenuBtn, styles.normal]}>
+                    <Text style={styles.normalText}>Location</Text>
+                </View>
+            </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.8}>
+                <View style={[styles.CheckpointMenuBtn, styles.active]}>
+                    <Text>Review</Text>
+                </View>
+            </TouchableOpacity>
                 </View>
                 <View style={styles.Desc}>
-                    <ScrollView style={styles.Scroll}>
-                        <View style={styles.checkpoint}>
-                            <View style={styles.checkpointContent}>
-                                <View style={styles.checkpointRow}>
-                                    <Detail />
-                                </View>
-                                <View style={styles.checkpointRowCenter}>
-                                    <TouchableOpacity>
-                                        <View style={styles.CheckinBtn}>
-                                            <Text style={styles.CheckinBtnText}>Check in</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={styles.checkpointRow}>
-                                    <Scorebar />
-                                </View>
-                            </View>
+                <View style={styles.checkpoint}>
+                    <View style={styles.checkpointContent}>
+                        <View style={styles.checkpointRow}>
+                            <Name Checkpoint_Name={this.state.checkpoint.Checkpoint_Name}/>
                         </View>
-                    </ScrollView>
+                    </View>
                 </View>
             </View>
+            </View>
         );
+    }
       }
       
     }
@@ -100,25 +172,14 @@ export default class CheckpointLocation extends Component {
             justifyContent: 'center',
             alignItems: 'center',
         },
-        navBtn: {
-            borderWidth: 2,
-            borderColor: '#165A45',
-            width: width * 0.2,
-            alignItems: 'center',
-            borderRadius: 50,
-        },
-        navBtnText: {
-            color: '#165A45',
-            fontWeight: 'bold',
-        },
         navBack: {
             width: width * 0.07,
             height: height * 0.07,
         },
         CheckpointPhoto: {
             backgroundColor: '#000',
-            width: width,
             flex: 3,
+            width: width,
         },
         Desc: {
             flex: 5,
@@ -131,6 +192,9 @@ export default class CheckpointLocation extends Component {
             flexDirection: 'row',
             justifyContent: 'space-around',
             alignItems: 'center',
+            position: 'absolute',
+            top: 175,
+            height: 40
         },
         CheckpointMenuBtn: {
             borderTopLeftRadius: 5,
@@ -188,4 +252,4 @@ export default class CheckpointLocation extends Component {
       });
       
     
-AppRegistry.registerComponent('CheckpointLocation', () => CheckpointLocation);
+AppRegistry.registerComponent('CheckpointReview', () => CheckpointReview);

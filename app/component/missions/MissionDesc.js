@@ -26,7 +26,7 @@ export default class MissionDesc extends Component {
                     <View style={styles.missionContent}>
                         <View style={styles.missionRow}>
                             <Image style={styles.missionImg} source={require('../../img/vm_icc_msDesc.png')} />
-                            <Text style={styles.missionText}>{this.props.Mission_Description}</Text>
+                                <Text style={styles.missionText}>{this.props.Mission_Description}</Text>
                         </View>
                         <View style={styles.missionRow}>
                             <Image style={styles.missionImg} source={require('../../img/vm_icc_msScore.png')} />
@@ -75,19 +75,21 @@ const styles = StyleSheet.create({
     },
     missionRow: {
         flexDirection: 'row',
-        marginBottom: 5
+        marginBottom: 5,
+        
     },
     missionText: {
         color: '#165A45',
         fontSize: 15,
         textAlign: 'left',
-        paddingLeft: 5
+        paddingLeft: 5,
+        width: width - 30,
     },
     missionImg: {
         width: 15,
         height: 20,
         marginBottom: 5
-    }
+    },
 });
 
 AppRegistry.registerComponent('MissionDesc', () => MissionDesc);
