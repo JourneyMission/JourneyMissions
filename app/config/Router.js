@@ -15,20 +15,19 @@ import ProfileRanking from '../screen/ProfileRanking';
 
 const Router = StackNavigator({
   
-  
-  
 
+  
   Login: {
     screen: Login
   },
   Profile: {
     screen: Profile
   },
-  ProfileRanking: {
-    screen: ProfileRanking
-  },
   ProfileBadge: {
     screen: ProfileBadge
+  },
+  ProfileRanking: {
+    screen: ProfileRanking
   },
   MissionDetail: {
     screen: MissionDetail
@@ -59,6 +58,6 @@ const Router = StackNavigator({
   }
 }, {
   headerMode: 'none',
-  mode: 'modal'
+  mode: 'card',
 });
 export default Router;

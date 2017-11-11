@@ -134,7 +134,7 @@ export default class CheckpointLocation extends Component {
                     <View style={styles.nav}>
                         <View>
                             <TouchableOpacity onPress={() => navigate('MissionDetail', this.sendVar())}>
-                                <Image style={styles.navBack} source={require('../img/vm_btt_back.png')}/>
+                                <Image style={styles.navBack} source={require('../img/rc_btt_back.png')}/>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.navTitle}/>
@@ -214,9 +214,11 @@ const styles = StyleSheet.create({
         height: height * 0.07
     },
     CheckpointPhoto: {
-        backgroundColor: '#000',
-        flex: 3,
-        width: width
+        backgroundColor: '#E3EF6F',
+        height: height * 0.37,
+        width: width,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     Desc: {
         flex: 5,
@@ -225,13 +227,11 @@ const styles = StyleSheet.create({
     },
     CheckpointMenu: {
         width: width,
-        flex: 0.7,
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        position: 'absolute',
-        top: 175,
-        height: 40
+        height: 35,
+        marginTop: (-1) * (height * 0.07),
     },
     CheckpointMenuBtn: {
         borderTopLeftRadius: 5,
@@ -239,8 +239,9 @@ const styles = StyleSheet.create({
         width: width / 3,
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
+    
     normalText: {
         color: '#FFF'
     },

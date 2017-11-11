@@ -29,7 +29,7 @@ export default class CurrentMission extends Component {
     }
 
     componentDidMount() {
-        let URL = this.state.apiURL + '/JoinMissions?search=Profile_ID:' + this.state.id + ';Mission_Status:1&with=Mission';
+        let URL = this.state.apiURL + '/JoinMissions?search=Profile_ID:' + this.state.id + ';Mission_Status:1&with=Mission&searchJoin=and';
         console.log(URL);
         return fetch(URL, {
             method: 'GET',

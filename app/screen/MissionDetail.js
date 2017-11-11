@@ -155,23 +155,38 @@ export default class MissionDetail extends Component {
         let img = this.state.imgURL + '/checkpoint/grayicon/' + CheckpointImg;
         if (this.state.CheckMission.indexOf(id) !== -1) {
             img = this.state.imgURL + '/checkpoint/icon/' + CheckpointImg;
+            return (
+                <View style={styles.CheckpointIcon}>
+                    <Image style={styles.CheckpointImgCover} source={require('../img/vm_icc_checkpoint_pic.png')}>
+                        <Image style={styles.CheckpointImg} source={{
+                            uri: img
+                        }}/>
+                    </Image>
+                    <View style={styles.CheckpointNameCover}>
+                        <Text style={styles.CheckpointName}>
+                            {Name}
+                        </Text>
+                    </View>
+                </View>
+            );
         } else {
             img = this.state.imgURL + '/checkpoint/grayicon/' + CheckpointImg;
-        }
-        return (
-            <View style={styles.CheckpointIcon}>
-                <Image style={styles.CheckpointImgCover} source={require('../img/vm_icc_checkpoint_pic.png')}>
-                    <Image style={styles.CheckpointImg} source={{
-                        uri: img
-                    }}/>
-                </Image>
-                <View style={styles.CheckpointNameCover}>
-                    <Text style={styles.CheckpointName}>
-                        {Name}
-                    </Text>
+            return (
+                <View style={styles.CheckpointIcon}>
+                    <Image style={styles.CheckpointImgCover} source={require('../img/vm_icc_gcheckpoint_pic.png')}>
+                        <Image style={styles.CheckpointImg} source={{
+                            uri: img
+                        }}/>
+                    </Image>
+                    <View style={styles.CheckpointNameCoverG}>
+                        <Text style={[styles.CheckpointName, styles.CheckpointNameG]}>
+                            {Name}
+                        </Text>
+                    </View>
                 </View>
-            </View>
-        );
+            );
+        }
+        
 
     }
     checkpointIcon(Name, CheckpointImg, rowID, id) {
@@ -183,8 +198,9 @@ export default class MissionDetail extends Component {
     }
 
     joinMission = () => {
-        this.setState({isLoading: true});
+        
         if (!this.state.JoinMission) {
+            this.setState({isLoading: true});
             let URL = this.state.apiURL + '/JoinMissions?Mission_ID=' + this.state.Mission_ID + '&Profile_ID=' + this.state.id + '&Mission_Status=1';
             console.log(URL);
             fetch(URL, {
@@ -205,24 +221,39 @@ export default class MissionDetail extends Component {
                 console.error(error);
             });
         } else {
-            let URL = this.state.apiURL + '/JoinMissions/' + this.state.JoinMission_ID;
-            console.log(URL);
-            fetch(URL, {
-                method: 'DELETE',
-                headers: {
-                    Accept: 'application/json'
-                }
-            }).then((response) => response.json()).then((responseJson) => {
-                this.setState({
-                    isLoading: false,
-                    JoinMission: false
-                }, () => {
-                    alert('Quit Mission');
-                });
-            }).catch((error) => {
-                console.error(error);
-            });
+            Alert.alert(
+                'Warning',
+                'Are you sure to Quit Mission ?',
+                [
+                  {text: 'Yes', onPress: () => this.quitMission()},
+                  {text: 'No', onPress: () => console.log('No Press'), style: 'cancel'},
+                ],
+                { cancelable: false }
+              );
+            
         }
+    }
+    quitMission(){
+        this.setState({isLoading: true});
+        let URL = this.state.apiURL + '/JoinMissions/' + this.state.JoinMission_ID;
+        console.log(URL);
+        fetch(URL, {
+            method: 'DELETE',
+            headers: {
+                Accept: 'application/json'
+            }
+        }).then((response) => response.json()).then((responseJson) => {
+            this.setState({
+                isLoading: false,
+                JoinMission: false
+            }, () => {
+                alert('Quit Mission');
+                const {navigate} = this.props.navigation;
+                navigate(this.state.back, this.sendVar());
+            });
+        }).catch((error) => {
+            console.error(error);
+        });
     }
     completeMission(complete) {
         if (complete) {
@@ -387,8 +418,19 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderColor: '#F9D565',
     },
+    CheckpointNameCoverG: {
+        marginBottom: 15,
+        backgroundColor: '#5D5D5D',
+        paddingLeft: 10,
+        paddingRight: 10,
+        borderRadius: 10,
+        borderColor: '#5D5D5D',
+    },
     CheckpointName: {
         flexWrap: 'wrap',
+    },
+    CheckpointNameG: {
+        color: '#FFF',
     }
 });
 

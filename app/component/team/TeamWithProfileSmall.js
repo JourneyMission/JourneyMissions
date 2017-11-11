@@ -18,20 +18,32 @@ export default class TeamWithProfile extends Component {
         };
     }
 
+    componentDidMount() {
+        Image.prefetch(this.state.fbPhotoURL);
+    }
+
+    getPhoto(fbPhotoURL){
+        return (<Image style={styles.avatar} source={{ uri: fbPhotoURL }} />
+        );
+
+    }
+
     checkTeam(team, fbPhotoURL) {
         if (team === 'fox') {
             return (
                 <Image style={styles.teammask} source={require('../../img/mm_team_fox.png')} >
-                    <Image style={styles.avatar} source={{ uri: fbPhotoURL }} />
+                {this.getPhoto(fbPhotoURL)}
                 </Image>
             );
         } else if (team === 'bear') {
             return (
                 <Image style={styles.teammask} source={require('../../img/mm_team_bear.png')} >
-                    <Image style={styles.avatar} source={{ uri: fbPhotoURL }} />
-                </Image>
+                 {this.getPhoto(fbPhotoURL)}
+                 </Image>
             );
         }
+        return this.getPhoto(fbPhotoURL);
+        
     }
 
   render() {
@@ -53,7 +65,7 @@ const styles = StyleSheet.create({
         height: width * 0.15,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: width * 0.5,
+        borderRadius: width * 0.15,
         zIndex: -100,
     },
     teammask: {

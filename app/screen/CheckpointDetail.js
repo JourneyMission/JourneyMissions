@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
     AppRegistry,
     StyleSheet,
@@ -67,7 +67,7 @@ export default class CheckpointDetail extends Component {
                         Accept: 'application/json'
                     }
                 }).then((response) => response.json()).then((responseJson) => {
-                    if ((responseJson.data.length !== 0) && (this.state.JoinMission === true)) {
+                    if ((responseJson.data.length !== 0) && !(this.state.JoinMission === true)) {
                         this.setState({Checkin: false, isLoading: false});
                     } else {
                         this.setState({Checkin: true, isLoading: false});
@@ -240,27 +240,8 @@ export default class CheckpointDetail extends Component {
             return (
 
                 <View style={styles.container}>
-                    <Modal
-                        animationType="fade"
-                        transparent={false}
-                        visible={this.state.modalVisible}>
-                        <View
-                            style={{
-                            marginTop: 22
-                        }}>
-                            <View>
-                                <Text>Hello World!</Text>
 
-                                <TouchableHighlight
-                                    onPress={() => {
-                                    this.setModalVisible(!this.state.modalVisible)
-                                }}>
-                                    <Text>Hide Modal</Text>
-                                </TouchableHighlight>
-
-                            </View>
-                        </View>
-                    </Modal>
+                    <ScrollView>
                     <View style={styles.nav}>
                         <View>
                             <TouchableOpacity onPress={() => navigate('MissionDetail', this.sendVar())}>
@@ -274,7 +255,7 @@ export default class CheckpointDetail extends Component {
                         style={styles.CheckpointPhoto}
                         source={{
                         uri: this.state.checkpoint_Photo
-                    }}/>
+                    }} />
                     <View style={styles.CheckpointMenu}>
                         <TouchableOpacity activeOpacity={0.8}>
                             <View style={[styles.CheckpointMenuBtn, styles.active]}>
@@ -297,7 +278,7 @@ export default class CheckpointDetail extends Component {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.Desc}>
-                        <ScrollView style={styles.Scroll}>
+                        
                             <View style={styles.checkpoint}>
                                 <View style={styles.checkpointContent}>
                                     <View style={styles.checkpointRow}>
@@ -315,8 +296,8 @@ export default class CheckpointDetail extends Component {
                                     </View>
                                 </View>
                             </View>
-                        </ScrollView>
                     </View>
+                    </ScrollView>
                 </View>
             );
         }
@@ -352,9 +333,11 @@ const styles = StyleSheet.create({
         height: height * 0.07
     },
     CheckpointPhoto: {
-        backgroundColor: '#000',
-        flex: 3,
-        width: width
+        backgroundColor: '#E3EF6F',
+        height: height * 0.37,
+        width: width,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     Desc: {
         flex: 5,
@@ -363,13 +346,19 @@ const styles = StyleSheet.create({
     },
     CheckpointMenu: {
         width: width,
-        flex: 0.7,
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        position: 'absolute',
-        top: 175,
-        height: 40
+        height: 35,
+        marginTop: (-1) * (height * 0.07),
+    },
+    CheckpointMenuBtn: {
+        borderTopLeftRadius: 5,
+        borderTopRightRadius: 5,
+        width: width / 3,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     CheckpointMenuBtn: {
         borderTopLeftRadius: 5,

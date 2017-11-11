@@ -30,7 +30,7 @@ export default class RecommendMission extends Component {
     }
 
     componentDidMount() {
-        let URL = this.state.apiURL + '/Missions';
+        let URL = this.state.apiURL + '/RecommendMission/' + this.state.id;
         return fetch(URL, {
             method: 'GET',
             headers: { Accept: 'application/json' }

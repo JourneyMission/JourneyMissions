@@ -7,10 +7,13 @@ import {
     TouchableOpacity,
     Image,
     Text,
-    ScrollView,
+    ActivityIndicator,
+    ListView,
+    ScrollView
 } from 'react-native';
 import TeamWithProfile from '../component/team/TeamWithProfileMedium';
-import TeamWithProfileSmall from '../component/team/TeamWithProfileSmall';
+import Rankrow from '../component/profiles/Rankrow';
+
 const {width, height} = Dimensions.get('window');
 export default class Profile extends Component {
     constructor(props) {
@@ -23,148 +26,173 @@ export default class Profile extends Component {
             team: state.params.team,
             score: state.params.score,
             apiURL: state.params.apiURL,
-            name: state.params.name
-          };
+            name: state.params.name,
+            rank: 0,
+        };
     }
     sendVar() {
-        const { state } = this.props.navigation; 
+        const {state} = this.props.navigation;
         const variable = {
             id: state.params.id,
             fbId: state.params.fbId,
             team: state.params.team,
             apiURL: state.params.apiURL,
             score: state.params.score,
-            name: state.params.name,
+            name: state.params.name
         };
         return variable;
+    }
+    componentDidMount() {
+        let URL = this.state.apiURL + '/Profiles/' + this.state.id;
+        console.log(URL);
+        return fetch(URL, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json'
+            }
+        }).then((response) => response.json()).then((responseJson) => {
+            let profileRank = new ListView.DataSource({
+                rowHasChanged: (r1, r2) => r1 !== r2
+            });
+            this.setState({
+                dataSource: profileRank.cloneWithRows(responseJson.data),
+                Rank: responseJson.rank,
+                isLoading: false
+            });
+
+        }).catch((error) => {
+            console.error(error);
+        });
+    }
+
+    checkMyRank(Profile_ProviderID, rank) {
+        let fbId = this.state.fbId;
+        if (fbId == parseInt(Profile_ProviderID)) {
+            this.setState({Rank: rank});
+        }
+        return rank;
     }
 
     render() {
         const {navigate} = this.props.navigation;
-        return (
+        let count = 1;
+        if (this.state.isLoading) {
+            return (
+                <View style={styles.container}>
+                    <ScrollView>
+                        <View style={styles.nav}>
+                            <View>
+                                <TouchableOpacity onPress={() => navigate('Home', this.sendVar())}>
+                                    <Image style={styles.navBack} source={require('../img/rc_btt_back.png')}/>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.navTitle}/>
+                            <View/>
+                            <View/>
+                        </View>
+                        <View style={styles.Head}>
+                            <TeamWithProfile team={this.state.team} fbId={this.state.fbId}/>
+                            <Text style={styles.name}>{this.state.name}</Text>
+                        </View>
+                        <View style={styles.Menu}>
+                            <TouchableOpacity
+                                activeOpacity={0.8}
+                                onPress={() => navigate('Profile', this.sendVar())}>
 
+                                <View style={[styles.MenuBtn, styles.normal]}>
+                                    <Text style={styles.normalText}>Profile</Text>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                activeOpacity={0.8}
+                                onPress={() => navigate('ProfileBadge', this.sendVar())}>
+                                <View style={[styles.MenuBtn, styles.normal]}>
+                                    <Text style={styles.normalText}>Badge</Text>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity activeOpacity={0.8}>
+                                <View style={[styles.MenuBtn, styles.active]}>
+                                    <Text >Ranking</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.Desc}>
+                            <View style={styles.Row}>
+                                <Text style={styles.YourRank}>Your Rank</Text>
+                            </View>
+                            <View style={styles.Row}>
+                                <Text style={styles.Rank}>{this.state.Rank}</Text>
+                            </View>
+                            <ActivityIndicator />
+                        </View>
+
+                    </ScrollView>
+                </View>
+            );
+        }
+
+        return (
             <View style={styles.container}>
-            <ScrollView>
-            
-                <View style={styles.nav}>
-                    <View>
-                        <TouchableOpacity onPress={() => navigate('Home', this.sendVar())}>
-                            <Image style={styles.navBack} source={require('../img/rc_btt_back.png')}/>
+                <ScrollView>
+
+                    <View style={styles.nav}>
+                        <View>
+                            <TouchableOpacity onPress={() => navigate('Home', this.sendVar())}>
+                                <Image style={styles.navBack} source={require('../img/rc_btt_back.png')}/>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.navTitle}/>
+                        <View/>
+                        <View/>
+                    </View>
+                    <View style={styles.Head}>
+                        <TeamWithProfile team={this.state.team} fbId={this.state.fbId}/>
+                        <Text style={styles.name}>{this.state.name}</Text>
+                    </View>
+                    <View style={styles.Menu}>
+                        <TouchableOpacity
+                            activeOpacity={0.8}
+                            onPress={() => navigate('Profile', this.sendVar())}>
+
+                            <View style={[styles.MenuBtn, styles.normal]}>
+                                <Text style={styles.normalText}>Profile</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            activeOpacity={0.8}
+                            onPress={() => navigate('ProfileBadge', this.sendVar())}>
+                            <View style={[styles.MenuBtn, styles.normal]}>
+                                <Text style={styles.normalText}>Badge</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity activeOpacity={0.8}>
+                            <View style={[styles.MenuBtn, styles.active]}>
+                                <Text >Ranking</Text>
+                            </View>
                         </TouchableOpacity>
                     </View>
-                    <View style={styles.navTitle}/>
-                    <View/>
-                    <View/>
-                </View>
-                <View style={styles.Head}>
-                    <TeamWithProfile team={this.state.team} fbId={this.state.fbId}/>
-                    <Text style={styles.name}>{this.state.name}</Text>
-                </View>
-                <View style={styles.Menu}>
-                    <TouchableOpacity 
-                    activeOpacity={0.8}
-                    onPress={() => navigate('Profile', this.sendVar())}>
-                    
-                        <View style={[styles.MenuBtn, styles.normal]}>
-                            <Text style={styles.normalText}>Profile</Text>
+
+                    <View style={styles.Desc}>
+                        <View style={styles.Row}>
+                            <Text style={styles.YourRank}>Your Rank</Text>
                         </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        activeOpacity={0.8}
-                        onPress={() => navigate('ProfileBadge', this.sendVar())}>
-                        <View style={[styles.MenuBtn, styles.normal]}>
-                            <Text style={styles.normalText}>Badge</Text>
+                        <View style={styles.Row}>
+                            <Text style={styles.Rank}>{this.state.Rank}</Text>
                         </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        activeOpacity={0.8}>
-                        <View style={[styles.MenuBtn, styles.active]}>
-                            <Text >Ranking</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-                
-                <View style={styles.Desc}>
-                    <View style={styles.Row}>
-                        <Text style={styles.YourRank}>Your Rank</Text>
+                       <ListView
+                            style={styles.Rankrow}
+                            dataSource={this.state.dataSource}
+                            renderRow={(rowData) => 
+                            < Rankrow name = {rowData.Profile_Name}
+                            fbId = {rowData.Profile_ProviderID}
+                            team = {rowData.Profile_Team}
+                            score = {rowData.Profile_Score}
+                             rank = {count++} />
+                        }/>
                     </View>
-                    <View style={styles.Row}>
-                        <Text style={styles.Rank}>40</Text>
-                    </View>
-                    <View style={styles.rankRow}>
-                        <View style={styles.Block}>
-                            <Image style={styles.rankImg} source={require('../img/rk_rank_1.png')} />
-                        </View>
-                        <View style={styles.Block}>
-                            <TeamWithProfileSmall team={this.state.team} fbId={this.state.fbId} />
-                        </View>
-                        <View style={styles.Block}>
-                            <Text>{this.state.name}</Text>
-                        </View>
-                        <View style={styles.Block}>
-                            <Text>{this.state.score}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.rankRow}>
-                        <View style={styles.Block}>
-                            <Image style={styles.rankImg} source={require('../img/rk_rank_2.png')} />
-                        </View>
-                        <View style={styles.Block}>
-                            <TeamWithProfileSmall team={this.state.team} fbId={this.state.fbId} />
-                        </View>
-                        <View style={styles.Block}>
-                            <Text>{this.state.name}</Text>
-                        </View>
-                        <View style={styles.Block}>
-                            <Text>{this.state.score}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.rankRow}>
-                        <View style={styles.Block}>
-                            <Image style={styles.rankImg} source={require('../img/rk_rank_3.png')} />
-                        </View>
-                        <View style={styles.Block}>
-                            <TeamWithProfileSmall team={this.state.team} fbId={this.state.fbId} />
-                        </View>
-                        <View style={styles.Block}>
-                            <Text>{this.state.name}</Text>
-                        </View>
-                        <View style={styles.Block}>
-                            <Text>{this.state.score}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.rankRow}>
-                        <View style={styles.Block}>
-                        <Text style={styles.rankImg}>  4 </Text>
-                        </View>
-                        <View style={styles.Block}>
-                            <TeamWithProfileSmall team={this.state.team} fbId={this.state.fbId} />
-                        </View>
-                        <View style={styles.Block}>
-                            <Text>{this.state.name}</Text>
-                        </View>
-                        <View style={styles.Block}>
-                            <Text>{this.state.score}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.rankRow}>
-                        <View style={styles.Block}>
-                            <Text style={styles.rankImg}> 5 </Text>
-                        </View>
-                        <View style={styles.Block}>
-                            <TeamWithProfileSmall team={this.state.team} fbId={this.state.fbId} />
-                        </View>
-                        <View style={styles.Block}>
-                            <Text>{this.state.name}</Text>
-                        </View>
-                        <View style={styles.Block}>
-                            <Text>{this.state.score}</Text>
-                        </View>
-                    </View>
-                    
-                </View>
-                
-            </ScrollView>
+
+                </ScrollView>
             </View>
         );
     }
@@ -214,8 +242,7 @@ const styles = StyleSheet.create({
     Desc: {
         flex: 5,
         backgroundColor: '#FFF',
-        
-        justifyContent: 'space-around'
+        justifyContent: 'flex-start'
     },
     Menu: {
         width: width,
@@ -245,6 +272,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFF',
         flex: 1
     },
+    Rankrow: {
+        zIndex: 0,
+    },
     Row: {
         flexDirection: 'row',
         marginTop: 2,
@@ -253,29 +283,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: width
     },
-    rankRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        width: width
-    },
-    Block: {
-    }, 
     YourRank: {
         fontWeight: 'bold',
         fontSize: 20,
-        paddingTop: 10,
+        paddingTop: 10
     },
     Rank: {
-        fontSize: 50,
+        fontSize: 50
     },
-    rankImg: {
-        width: width * 0.075,
-        height: width * 0.075,
-        justifyContent: 'center',
-        alignItems: 'center'
-    }
-    
+
 });
 
 AppRegistry.registerComponent('Profile', () => Profile);

@@ -6,6 +6,7 @@ import {
     Dimensions,
     TouchableOpacity,
     Image,
+    ActivityIndicator,
     Text,
 } from 'react-native';
 import Scorebar from '../component/main/Scorebar';
@@ -23,8 +24,30 @@ export default class Profile extends Component {
             team: state.params.team,
             score: state.params.score,
             apiURL: state.params.apiURL,
-            name: state.params.name
+            name: state.params.name,
+            Mission: 0,
+            Checkpoint: 0,
           };
+    }
+    componentDidMount() {
+        let URL = this.state.apiURL + '/Profiles/' + this.state.id;
+        console.log(URL);
+        return fetch(URL, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json'
+            }
+        }).then((response) => response.json()).then((responseJson) => {
+            this.setState({
+                Rank: responseJson.rank,
+                Mission: responseJson.mission,
+                Checkpoint: responseJson.checkpoint,
+                isLoading: false
+            });
+
+        }).catch((error) => {
+            console.error(error);
+        });
     }
     sendVar() {
         const { state } = this.props.navigation; 
@@ -94,7 +117,7 @@ export default class Profile extends Component {
                     <View style={styles.Row}>
                         <View style={styles.Block}>
                             <Text style={styles.number}>
-                                1
+                                {this.state.Mission}
                             </Text>
                             <Text style={styles.text}>
                                 Missions
@@ -102,7 +125,7 @@ export default class Profile extends Component {
                         </View>
                         <View style={styles.Block}>
                             <Text style={styles.number}>
-                                1
+                                {this.state.Checkpoint}
                             </Text>
                             <Text style={styles.text}>
                                 Checkpoints
