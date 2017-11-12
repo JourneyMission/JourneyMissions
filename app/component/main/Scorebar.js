@@ -13,12 +13,44 @@ import {
 
 const { width, height } = Dimensions.get('window');
 export default class Scorebar extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            fox: 0.35,
+            bear: 0.35,
+            URL: this.props.URL,
+          };
+          console.log(this.state);
+    }
+    componentDidMount(){
+        let URL = this.state.URL + '/TeamScore';
+        console.log(URL);
+        return fetch(URL, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json'
+            }
+        }).then((response) => response.json()).then((responseJson) => {
+            this.setState({
+                bear: responseJson.bear,
+                fox: responseJson.fox,
+            });
+            console.log(this.state);
+        }).catch((error) => {
+            console.error(error);
+        });
+    }
     
     render() {
         return (
             <View style={styles.container}>
-                <View>
-                    <View />
+                <View style={styles.bar}>
+                    <Image style={styles.bearicon} source={require('../../img/ic_bear.png')} />
+                    <View style={styles.barCover}>
+                        <View style={[styles.bear, {width: width * this.state.bear}]} />
+                        <View style={[styles.fox, {width: width * this.state.fox}]} />
+                    </View>
+                    <Image style={styles.foxicon} source={require('../../img/ic_fox.png')} />
                 </View>
             </View>
         );
@@ -27,92 +59,44 @@ export default class Scorebar extends Component {
     }
     const styles = StyleSheet.create({
         container: {
-            backgroundColor: '#ccc',
-            justifyContent: 'flex-start',
+            width: width * 0.9,
+            height: 40,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        barCover: {
+            justifyContent: 'space-around',
             alignItems: 'center',
             width: width * 0.7,
             height: 25,
-          },
-          nav: {
-              width: width,
-              height: height * 0.12,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              zIndex: -100,
-              position: 'absolute',
-              top: 0,
-              paddingLeft: 15,
-              paddingRight: 15,
-          },
-          navTitle: {
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-          },
-          navText: {
-              color: '#165A45',
-              fontSize: 20,
-              fontWeight: 'bold',
-              textAlign: 'center',
-          },
-          navMission: {
-              height: 44,
-              resizeMode: 'cover',
-          },
-          navBtn: {
-              borderWidth: 2,
-              borderColor: '#165A45',
-              width: width * 0.2,
-              alignItems: 'center',
-              borderRadius: 50,
-          },
-          navBtnText: {
-              color: '#165A45',
-              fontWeight: 'bold',
-          },
-          navBack: {
-              width: width * 0.07,
-              height: height * 0.07,
-          },
-          Desc: {
-              flex: 1,
-              width: width,
-              backgroundColor: '#000',
-          },
-          Scroll: {
-            width: width,
-            flex: 1,
-        },
-        Map: {
-            width: width,
-            flex: 1,
-            zIndex: 100,
-            top: 0,
-            justifyContent: 'space-around',
-            alignItems: 'center',
-        },
-        CheckpointLeft: {
-            
-        },
-        CheckpointImg: {
-            width: 70,
-            height: 70,
-            borderWidth: 7,
-            borderColor: '#FFF',
-            borderRadius: 70,
-        },
-        CheckpointRight: {
-            
-        },
-        CarImg: {
-            width: 100,
-            height: 85,
-        },
-        row: {
             flexDirection: 'row',
-            justifyContent: 'space-around',
-            width: width,
+            backgroundColor: '#CCC',
+        },
+        foxicon: {
+            width: 45,
+            height: 40,
+            marginTop: -2,
+            marginLeft: -15,
+        },
+        bearicon: {
+            width: 45,
+            height: 40,
+            marginTop: -7,
+            marginRight: -15,
+            zIndex: 100,
+        },
+        bear: {
+            backgroundColor: '#554126',
+            
+            height: 25,
+        },
+        fox: {
+            backgroundColor: '#F15A24',
+            height: 25,
+        },
+        bar: {
+            flexDirection: 'row',
+            alignItems: 'center',
         }
       });
       

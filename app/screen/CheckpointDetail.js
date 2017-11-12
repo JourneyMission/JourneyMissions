@@ -291,8 +291,8 @@ export default class CheckpointDetail extends Component {
                                     <View style={styles.checkpointRowCenter}>
                                         {this.checkinButton(this.state.Checkin)}
                                     </View>
-                                    <View style={styles.checkpointRow}>
-                                        <Scorebar/>
+                                    <View style={styles.Row}>
+                                        <Scorebar URL={this.state.apiURL} />
                                     </View>
                                 </View>
                             </View>
@@ -410,7 +410,13 @@ const styles = StyleSheet.create({
     },
     checkpointRow: {
         flexDirection: 'row',
-        marginBottom: 10
+        marginBottom: 10,
+    },
+    Row: {
+        flexDirection: 'row',
+        marginBottom: 15,
+        justifyContent: 'space-around',
+        alignItems: 'center',
     },
     CheckinBtnText: {
         color: '#827F3B'

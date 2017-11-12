@@ -136,7 +136,7 @@ export default class Profile extends Component {
                     <Text style={styles.ScoreText}>Team Score</Text>
                     </View>
                         <View style={styles.Row}>
-                            <Scorebar />
+                        <Scorebar URL={this.state.apiURL} />
                         </View>
                 </View>
             </View>
