@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     NameBlock: {
         justifyContent: 'center',
         alignItems: 'flex-start',
-        width: width * 0.6
+        width: width * 0.5
     },
     RankBlock: {
         justifyContent: 'center',
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     ScoreBlock: {
         justifyContent: 'flex-end',
         alignItems: 'flex-end',
-        width: width * 0.05
+        width: width * 0.15
     },
     rankImg: {
         width: width * 0.075,

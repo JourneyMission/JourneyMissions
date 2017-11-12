@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         flexDirection: 'row',
         marginBottom: 10,
+        backgroundColor: '#fff',
     },
     missionImg: {
         width: 100,

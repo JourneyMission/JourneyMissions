@@ -31,30 +31,50 @@ export default class SearchMission extends Component {
           score: state.params.score,
           apiURL: state.params.apiURL,
           name: state.params.name,
+          firstLoad: true,
+          Source:{
+
+          },
+          Destination:{
+
+          },
         };
     }
     
     componentDidMount() {
         let URL = this.state.apiURL + '/Missions';
-        return this.fetchData(URL);
-      }
-    
-    fetchData(URL){
-        return fetch( URL, {
+        fetch( URL, {
             method: 'GET',
             headers: {'Accept': 'application/json'}
              }).then((response) => response.json())
           .then((responseJson) => {
             let missions = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
             this.setState({
-              isLoading: false,
               dataSource: missions.cloneWithRows(responseJson.data),
             });
+            fetch( PickerURL, {
+                method: 'GET',
+                headers: {'Accept': 'application/json'}
+                 }).then((response) => response.json())
+              .then((responseJson) => {
+                this.setState({
+                  isLoading: false,
+                  Source: responseJson.source,
+                  Destination: responseJson.destination,
+                  firstLoad: false,
+                });
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+            console.log(this.state.dataSource);
           })
           .catch((error) => {
             console.error(error);
           });
-    }
+        let PickerURL = this.state.apiURL + '/ProvienceSearch';
+        
+      }
     
     sendVar() {
         const { state } = this.props.navigation; 
@@ -70,7 +90,20 @@ export default class SearchMission extends Component {
     }
     search() {
         let URL = this.state.apiURL + '/Missions?search=Mission_Source:' + this.state.source + ';Mission_Destination:' + this.state.destination;
-        return this.fetchData(URL);
+        fetch( URL, {
+            method: 'GET',
+            headers: {'Accept': 'application/json'}
+             }).then((response) => response.json())
+          .then((responseJson) => {
+            let missions = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+            this.setState({
+              isLoading: false,
+              dataSource: missions.cloneWithRows(responseJson.data),
+            });
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       }
     sendVartoCheckpoint(Mission_ID) {
         const { state } = this.props.navigation; 
@@ -79,8 +112,32 @@ export default class SearchMission extends Component {
         variable['back'] = 'SearchMission';
         return variable;
     }
+
+    pickerSource(){
+        return this.state.Source.map((l) => {return <Picker.Item value={l.id} label={l.Provience_Name} key={l.id} /> });
+    }
+    pickerDestination(){
+        return this.state.Destination.map((l) => {return <Picker.Item value={l.id} label={l.provience_Name} key={l.id} /> });
+    }
     render() {
         const { navigate } = this.props.navigation;
+        if(this.state.firstLoad){
+            return (
+                <View style={styles.container}>
+                <View style={styles.nav}>
+                <TouchableOpacity onPress={() => navigate('RecommendMission', this.sendVar())}>
+                        <Image style={styles.navBack} source={require('../img/rc_btt_back.png')} />
+                    </TouchableOpacity>
+                    <Text style={styles.navText}> Search Mission </Text>
+                    <Text style={styles.navText}>&nbsp;</Text>
+                </View>
+                <Image style={styles.bg} source={require('../img/rc_bg_prop.png')} />
+                <ScrollView style={styles.SearchResult}>
+                    < ActivityIndicator />
+                </ScrollView>
+            </View>
+            );
+        }
         if (this.state.isLoading) {
             return (
                 <View style={styles.container}>
@@ -94,20 +151,16 @@ export default class SearchMission extends Component {
                 <Image style={styles.bg} source={require('../img/rc_bg_prop.png')} />
                 <ScrollView style={styles.SearchResult}>
                     <View style={styles.contain}>
-                        <View>
-                            <Text style={styles.TextContent}>From : </Text>
-                            <Picker style={styles.pickerSearch} selectedValue={this.state.source} onValueChange={(e) => this.setState({ source: e })}>
-                            <Picker.Item value="1" label="Bangkok" />
-                            <Picker.Item value="33" label="Ayutthaya" />
-                            <Picker.Item value="39" label="Phetchaburi" />
-                            </Picker>
-                            <Text style={styles.TextContent}>To : </Text>
-                            <Picker style={styles.pickerSearch} selectedValue={this.state.destination} onValueChange={(e) => this.setState({ destination: e })}>
-                            <Picker.Item value="1" label="Bangkok" />
-                            <Picker.Item value="30" label="Prachuap Khiri Khan" />
-                            <Picker.Item value="54" label="Lampoon" />
-                            </Picker>
-                        </View>
+                    <View>
+                    <Text style={styles.TextContent}>From : </Text>
+                    <Picker style={styles.pickerSearch} selectedValue={this.state.source} onValueChange={(e) => this.setState({ source: e })}>
+{this.pickerSource()}
+                </Picker>
+                <Text style={styles.TextContent}>To : </Text>
+                <Picker style={styles.pickerSearch} selectedValue={this.state.destination} onValueChange={(e) => this.setState({ destination: e })}>
+{this.pickerDestination()}
+                    </Picker>
+                </View>
                     
                 <Image style={styles.btn} source={require('../img/rc_btn_search.png')} />
                     < ActivityIndicator />
@@ -132,24 +185,18 @@ export default class SearchMission extends Component {
                         <View>
                             <Text style={styles.TextContent}>From : </Text>
                             <Picker style={styles.pickerSearch} selectedValue={this.state.source} onValueChange={(e) => this.setState({ source: e })}>
-                            <Picker.Item value="1" label="Bangkok" />
-                            <Picker.Item value="33" label="Ayutthaya" />
-                            <Picker.Item value="39" label="Phetchaburi" />
+        {this.pickerSource()}
                         </Picker>
                         <Text style={styles.TextContent}>To : </Text>
                         <Picker style={styles.pickerSearch} selectedValue={this.state.destination} onValueChange={(e) => this.setState({ destination: e })}>
-                        <Picker.Item value="1" label="Bangkok" />
-                        <Picker.Item value="30" label="Prachuap Khiri Khan" />
-                        <Picker.Item value="54" label="Lampoon" />
+        {this.pickerDestination()}
                             </Picker>
                         </View>
                     
                 <TouchableOpacity onPress={() => this.search()}>
                     <Image style={styles.btn} source={require('../img/rc_btn_search.png')} />
                 </TouchableOpacity>
-
-                
-               <ListView
+                <ListView
                 style={styles.mission}
                 dataSource={this.state.dataSource}
                 renderRow={(rowData) => <TouchableOpacity
@@ -159,6 +206,8 @@ export default class SearchMission extends Component {
                     Mission_Description={rowData.Mission_Description}
                     Mission_Icon={rowData.Mission_Icon} />
             </TouchableOpacity>} />
+                
+               
                   </View>
                 </ScrollView>
             </View>
@@ -215,6 +264,7 @@ export default class SearchMission extends Component {
             width: width * 0.8,
             backgroundColor: '#FFF',
             marginBottom: 20,
+            height: height * 0.075,
         },
         btn: {
             width: width * 0.7,
@@ -226,7 +276,7 @@ export default class SearchMission extends Component {
         },
         TextContent: {
             color: '#FFF',
-            fontSize: 20,
+            fontSize: 15,
             textAlign: 'left',
         },
         SearchResult: {

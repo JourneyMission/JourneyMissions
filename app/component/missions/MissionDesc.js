@@ -34,7 +34,7 @@ export default class MissionDesc extends Component {
                         </View>
                         <View style={styles.missionRow}>
                             <Image style={styles.missionImg} source={require('../../img/vm_icc_score.png')} />
-                            <Text style={styles.missionText}>{this.props.Mission_Score}</Text>
+                            <Text style={styles.missionText}>{this.props.Mission_Score} point</Text>
                         </View>
                     </View>
                 </View>

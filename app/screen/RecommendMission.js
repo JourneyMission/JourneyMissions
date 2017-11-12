@@ -93,6 +93,7 @@ export default class RecommendMission extends Component {
                     style={styles.mission}
                     dataSource={this.state.dataSource}
                     renderRow={(rowData) => <TouchableOpacity
+                    activeOpacity={0.7}
                     onPress={() => navigate('MissionDetail', this.sendVartoCheckpoint(rowData.id))} >
                     <Mission
                         Mission_Name={rowData.Mission_Name}

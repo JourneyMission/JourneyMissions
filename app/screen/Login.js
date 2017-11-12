@@ -20,7 +20,7 @@ export default class Login extends Component {
     const {state} = this.props.navigation;
     this.state = {
       isLoading: true,
-      apiURL: 'http://10.0.2.2/api'
+      apiURL: 'https://www.journeymission.me/api'
     };
   }
 

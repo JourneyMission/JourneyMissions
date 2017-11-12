@@ -6,7 +6,8 @@ import {
   View,
   Image,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator
 } from 'react-native';
 import {
   LoginManager
@@ -25,11 +26,12 @@ export default class Home extends Component {
             score: state.params.score,
             apiURL: state.params.apiURL,
             name: state.params.name,
-            continue: false
+            continue: false,
+            isLoading: true
         };
     }
     componentDidMount() {
-        let URL = this.state.apiURL + '/JoinMissions?search=Profile_ID:' + this.state.id + ';Mission_Status:1&with=Mission&searchJoin=and';
+        let URL = this.state.apiURL + '/JoinMissions?search=Profile_ID:' + this.state.id + '&with=Mission';
         console.log(URL);
         return fetch(URL, {
             method: 'GET',
@@ -41,6 +43,10 @@ export default class Home extends Component {
             if(responseJson.data.length !== 0) {
                 this.setState({
                     continue: true,
+                    isLoading: false,
+                });
+            }else{
+                this.setState({
                     isLoading: false,
                 });
             }
@@ -74,6 +80,14 @@ export default class Home extends Component {
     }
   render() {
     const { navigate } = this.props.navigation;
+    if (this.state.isLoading) {
+        return(
+        <View style={styles.container}>
+          <Image style={styles.letgo} source={require('../img/letgo.png')}/>
+          <ActivityIndicator />
+        </View>
+        );
+    }
     return (
         <View style={styles.container}>
             <View style={styles.nav}>
@@ -102,6 +116,11 @@ const styles = StyleSheet.create({
       backgroundColor: '#FBD54A',
       justifyContent: 'center',
       alignItems: 'center',
+    },
+    letgo: {
+        width: width * 0.5,
+        height: (width * 0.5) + 50,
+        resizeMode: 'contain'
     },
     nav: {
         width: width,

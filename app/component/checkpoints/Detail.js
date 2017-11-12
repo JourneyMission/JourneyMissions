@@ -31,7 +31,10 @@ export default class CheckpointDetail extends Component {
                 </View>
                 <View style={styles.checkpointRow}>
                     <Image style={styles.checkpointImg} source={require('../../img/vm_icc_score.png')} />
-                    <Text style={styles.checkpointText}>{this.props.Checkpoint_Score}</Text>
+                    <Text style={styles.checkpointText}>
+                    Normal Time : +{this.props.Checkpoint_Score} point{"\n"}
+                    {this.props.Checkpoint_SpeacialScore !== 0 ? "\n" + 'Speacial Time :' + this.props.Checkpoint_SpeacialScore + 'point' : '' }
+                    </Text>
                 </View>
             </View>
         );

@@ -16,15 +16,13 @@ export default class Scorebar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            fox: 0.35,
-            bear: 0.35,
+            fox: 0.5,
+            bear: 0.5,
             URL: this.props.URL,
           };
-          console.log(this.state);
     }
     componentDidMount(){
         let URL = this.state.URL + '/TeamScore';
-        console.log(URL);
         return fetch(URL, {
             method: 'GET',
             headers: {
@@ -35,7 +33,6 @@ export default class Scorebar extends Component {
                 bear: responseJson.bear,
                 fox: responseJson.fox,
             });
-            console.log(this.state);
         }).catch((error) => {
             console.error(error);
         });
@@ -47,8 +44,8 @@ export default class Scorebar extends Component {
                 <View style={styles.bar}>
                     <Image style={styles.bearicon} source={require('../../img/ic_bear.png')} />
                     <View style={styles.barCover}>
-                        <View style={[styles.bear, {width: width * this.state.bear}]} />
-                        <View style={[styles.fox, {width: width * this.state.fox}]} />
+                        <View style={[styles.bear, {width: (width * 0.7) * this.state.bear}]} />
+                        <View style={[styles.fox, {width: (width * 0.7) * this.state.fox}]} />
                     </View>
                     <Image style={styles.foxicon} source={require('../../img/ic_fox.png')} />
                 </View>

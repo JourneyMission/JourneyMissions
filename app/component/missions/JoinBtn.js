@@ -13,11 +13,18 @@ export default class JoinBtn extends Component {
         super(props);
     }
     
-
+    text(){
+    if(this.props.Status === 'Complete'){
+        return 'Complete';
+    }else if(this.props.Status){
+        return  'Quit' ;
+    }
+    return 'Join';
+}
     render() {
         return (
             <View style={styles.navBtn}>
-                <Text style={styles.navBtnText}>{this.props.Status ?  'Quit' : 'Join'}</Text>
+                <Text style={styles.navBtnText}>{this.text()}</Text>
             </View>
         );
     }

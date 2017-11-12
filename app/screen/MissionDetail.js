@@ -56,14 +56,11 @@ export default class MissionDetail extends Component {
             this.setState({
                 Missionimg: this.state.imgURL + '/mission/photo/' + this.state.Mission.Mission_Photo
             });
-            console.log(this.state.Missionimg);
             Image.getSize(this.state.Missionimg, (widthMissionImg, heightMissionImg) => {
                 this.setState({
                     widthMissionImg: widthMissionImg,
                     heightMissionImg: heightMissionImg,
                 });
-                console.log(this.state.widthMissionImg);
-                console.log(this.state.heightMissionImg);
             });
             fetch(URL2, {
                 method: 'GET',
@@ -73,6 +70,7 @@ export default class MissionDetail extends Component {
             }).then((response) => response.json()).then((responseJson) => {
                 if (responseJson.data.length !== 0) {
                     this.setState({JoinMission: true, JoinMission_ID: responseJson.data[0].id, Mission_Status: false});
+                    console.log(responseJson.data[0].Mission_Status);
                     if (responseJson.data[0].Mission_Status !== 1) {
                         this.setState({Mission_Status: true});
                     }
@@ -155,20 +153,20 @@ export default class MissionDetail extends Component {
         let img = this.state.imgURL + '/checkpoint/grayicon/' + CheckpointImg;
         if (this.state.CheckMission.indexOf(id) !== -1) {
             img = this.state.imgURL + '/checkpoint/icon/' + CheckpointImg;
-            return (
-                <View style={styles.CheckpointIcon}>
-                    <Image style={styles.CheckpointImgCover} source={require('../img/vm_icc_checkpoint_pic.png')}>
-                        <Image style={styles.CheckpointImg} source={{
-                            uri: img
-                        }}/>
-                    </Image>
-                    <View style={styles.CheckpointNameCover}>
-                        <Text style={styles.CheckpointName}>
-                            {Name}
-                        </Text>
-                    </View>
+           return (
+            <View style={styles.CheckpointIcon}>
+                <Image style={styles.CheckpointImgCover} source={require('../img/vm_icc_checkpoint_pic.png')}>
+                    <Image style={styles.CheckpointImg} source={{
+                        uri: img
+                    }}/>
+                </Image>
+                <View style={styles.CheckpointNameCover}>
+                    <Text style={styles.CheckpointName}>
+                        {Name}
+                    </Text>
                 </View>
-            );
+            </View>
+        );
         } else {
             img = this.state.imgURL + '/checkpoint/grayicon/' + CheckpointImg;
             return (
@@ -202,7 +200,6 @@ export default class MissionDetail extends Component {
         if (!this.state.JoinMission) {
             this.setState({isLoading: true});
             let URL = this.state.apiURL + '/JoinMissions?Mission_ID=' + this.state.Mission_ID + '&Profile_ID=' + this.state.id + '&Mission_Status=1';
-            console.log(URL);
             fetch(URL, {
                 method: 'POST',
                 headers: {
@@ -236,7 +233,6 @@ export default class MissionDetail extends Component {
     quitMission(){
         this.setState({isLoading: true});
         let URL = this.state.apiURL + '/JoinMissions/' + this.state.JoinMission_ID;
-        console.log(URL);
         fetch(URL, {
             method: 'DELETE',
             headers: {
@@ -257,7 +253,7 @@ export default class MissionDetail extends Component {
     }
     completeMission(complete) {
         if (complete) {
-            return (<View/>);
+            return (<JoinBtn Status='Complete'/>);
         } else {
             return (
                 <TouchableOpacity onPress={this.joinMission}>
@@ -286,9 +282,11 @@ export default class MissionDetail extends Component {
                         <Image
                             style={styles.navMission}
                             source={require('../img/rc_ic_missionName.png')}/>
+                        <View style={styles.navTextCover}>
                         <Text style={styles.navText}>
                             {this.state.Mission.Mission_Name}
                         </Text>
+                        </View>
                     </View>
                     {this.completeMission(this.state.Mission_Status)}
                 </View>
@@ -345,13 +343,19 @@ const styles = StyleSheet.create({
     navTitle: {
         flexDirection: 'row',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+    },
+    navTextCover: {
+        flexWrap: 'wrap',
+        width: width * 0.5,
+        justifyContent: 'flex-start',
     },
     navText: {
         color: '#165A45',
         fontSize: 20,
         fontWeight: 'bold',
-        textAlign: 'center'
+        textAlign: 'center',
+        flexWrap: 'wrap',
     },
     navMission: {
         height: 44,
@@ -417,6 +421,8 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         borderRadius: 10,
         borderColor: '#F9D565',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     CheckpointNameCoverG: {
         marginBottom: 15,
@@ -428,6 +434,8 @@ const styles = StyleSheet.create({
     },
     CheckpointName: {
         flexWrap: 'wrap',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     CheckpointNameG: {
         color: '#FFF',
